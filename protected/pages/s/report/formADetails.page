@@ -1,0 +1,153 @@
+<%@ Title="Reports::Form A" %>
+<com:TContent ID="leftcontent">
+    <%include Application.pages.s.report.LeftMenu%>
+</com:TContent>
+<com:TContent ID="header">
+    Detail Rekening    
+</com:TContent>
+<com:TContent ID="contenttoolbar">
+    <%include Application.layouts.Toolbars%>
+</com:TContent>
+<com:TContent ID="content">
+    <com:TClientScript>
+        createCookie('style', '1col', 365);
+    </com:TClientScript>
+    <com:TPanel Visible="<%= $this->getViewProcess() %>">
+        <a href="<%=$this->Service->constructUrl('s.report.formA')%>">Kembali ke Form A</a>
+        <%include Application.layouts.DataKegiatan%>        
+        <com:TPanel Visible="<%=$this->dataUraian['status_lelang']=='0'%>">
+            <h3 class="tit">Data Uraian</h3> 
+            <table class="list">
+                <tr>
+                    <td class="left" width="200">Rekening</td>
+                    <td><%=$this->dataUraian['rekening']%></td>
+                </tr>
+                <tr>
+                    <td class="left" width="200">Nama Uraian</td>
+                    <td><%=$this->dataUraian['nama_uraian']%></td>
+                </tr>
+                <tr>
+                    <td class="left" width="200">Pagu Anggaran</td>
+                    <td><%=$this->finance->toRupiah($this->dataUraian['nilai'])%></td>
+                </tr>                	            
+            </table> 
+        </com:TPanel>        
+        <com:TPanel Visible="<%=$this->dataUraian['status_lelang']=='1'%>">
+            <h3 class="tit">Data Uraian</h3> 
+            <table class="list">
+                <tr>
+                    <td class="left" width="200">Rekening</td>
+                    <td><%=$this->dataUraian['rekening']%></td>
+                </tr>
+                <tr>
+                    <td class="left" width="200">Nama Uraian</td>
+                    <td><%=$this->dataUraian['nama_uraian']%></td>
+                </tr>
+                <tr>
+                    <td class="left" width="200">Pagu Anggaran</td>
+                    <td><%=$this->finance->toRupiah($this->dataUraian['nilai'])%></td>
+                </tr>
+                <tr>
+                    <td class="left" width="200">Lokasi</td>
+                    <td><%=$this->dataUraian['lokasi']%></td>
+                </tr>
+                <tr>
+                    <td class="left">Nama Perusahaan</td>
+                    <td><%=$this->dataUraian['nama_perusahaan']%></td>
+                </tr>		
+                <tr>
+                    <td class="left">Nilai Kontrak</td>
+                    <td><%=$this->finance->toRupiah($this->dataUraian['penawaran'])%></td>
+                </tr>
+                <tr>
+                    <td class="left">Tanggal Mulai Kerja</td>
+                    <td><%=$this->TGL->tanggal('d F Y',$this->dataUraian['tgl_mulai_pelaksanaan'])%></td>
+                </tr>
+                <tr>
+                    <td class="left">Masa Kerja</td>
+                    <td><%=$this->TGL->relativeTime($this->dataUraian['tgl_mulai_pelaksanaan'],$this->dataUraian['tgl_selesai_pelaksanaan'])%></td>
+                </tr>		            
+            </table> 
+        </com:TPanel>
+        <p style="text-align:center">
+            <img src="<%=$this->Service->constructUrl ('s.report.formADetailsAnggaranChart')%>" />
+        </p>
+        <p style="text-align:center">
+            <img src="<%=$this->Service->constructUrl ('s.report.formADetailsFisikChart')%>" />
+        </p>
+        <h3 class="tit">Pemecahan dan Permasalahan</h3> 
+        <com:TActiveRepeater ID="RepeaterPermasalahan" DataKeyField="idproblem">
+            <prop:HeaderTemplate>	
+            <table class="list">		
+                <thead>
+                    <tr>
+                        <th width="25" class="center">No</th>
+                        <th width="120" class="center">Tanggal</th>
+                        <th class="center">Permasalahan</th>                            
+                    </tr>                            
+                </thead>
+                <tbody>
+            </prop:HeaderTemplate>
+            <prop:ItemTemplate>
+                <tr>
+                    <td class="left"><%#$this->Data['no']%></td>
+                    <td class="left"><%#$this->Page->TGL->tanggal('d F Y',$this->Data['tanggal'])%></td>	
+                    <td class="left"><%#$this->Data['judul']%></td>                                               
+                </tr>
+            </prop:ItemTemplate>	
+            <prop:AlternatingItemTemplate>
+                <tr>
+                    <td class="left"><%#$this->Data['no']%></td>
+                    <td class="left"><%#$this->Page->TGL->tanggal('d F Y',$this->Data['tanggal'])%></td>	
+                    <td class="left"><%#$this->Data['judul']%></td>                                             
+                </tr>
+            </prop:AlternatingItemTemplate>	            
+            <prop:FooterTemplate>
+                <tbody>
+                </table>
+            </prop:FooterTemplate>	
+             <prop:EmptyTemplate>
+                <p class="msg info">
+                    Belum ada permasalahan.
+                </p>                
+            </prop:EmptyTemplate>
+        </com:TActiveRepeater>
+        <h3 class="tit">Photo Realisasi</h3>		
+        <com:TActiveRepeater ID="RepeaterPhoto" DataKeyField="idphoto">
+            <prop:HeaderTemplate>	
+            <table class="list">		
+                <thead>
+                    <tr>
+                        <th width="25" class="center">No</th>
+                        <th width="120" class="center">Photo</th>
+                        <th class="center">Keterangan</th>                                                        
+                    </tr>                            
+                </thead>
+                <tbody>
+            </prop:HeaderTemplate>
+            <prop:ItemTemplate>
+                <tr>
+                    <td class="left"><%#$this->DataItem['no']%></td>
+                    <td class="left"><img src="<%#$this->page->setup->getAddress().'/'.$this->DataItem['nama_photo']%>" width="100" height="100" /></td>	
+                    <td><%#$this->DataItem['keterangan']%></td>                            
+                </tr>
+            </prop:ItemTemplate>	
+            <prop:AlternatingItemTemplate>
+                <tr>
+                    <td class="left"><%#$this->DataItem['no']%></td>
+                    <td class="left"><img src="<%#$this->page->setup->getAddress().'/'.$this->DataItem['nama_photo']%>" width="100" height="100" /></td>	
+                    <td><%#$this->DataItem['keterangan']%></td>                                                
+                </tr>
+            </prop:AlternatingItemTemplate>	            
+            <prop:FooterTemplate>
+                <tbody>
+                </table>
+            </prop:FooterTemplate>	
+             <prop:EmptyTemplate>
+                <p class="msg info">
+                    Belum ada photo uraian.
+                </p>                
+            </prop:EmptyTemplate>
+        </com:TActiveRepeater>	
+	</com:TPanel>
+</com:TContent>

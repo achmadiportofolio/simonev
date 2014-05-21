@@ -1,0 +1,54 @@
+<%@ Title="Profiles" %>
+<com:TContent ID="header">User Profiles</com:TContent>
+<com:TContent ID="content">	    
+	<com:TPanel Visible="<%= $this->getDefaultProcess() %>">        
+        <h3 class="tit">Configuration - Password</h3>    
+        <table class="list">
+            <tbody>
+                <tr>
+                    <td class="left" width="150">Password</td>
+                    <td class="left"><com:TTextBox ID="txtPassword" Columns="20" TextMode="Password" /></td>
+                </tr>
+                <tr>
+                    <td class="left">Re-Password</td>
+                    <td class="left"><com:TTextBox ID="txtPassword2" Columns="20" TextMode="Password" />
+                        <com:TCompareValidator ControlToValidate="txtPassword" ControlToCompare="txtPassword2" Display="Dynamic" ErrorMessage="<span class='error'>Isi Password tidak sama</span>" ValidationGroup="configurationpassword" FocusOnError="true">				
+                            <prop:ClientSide.OnValidationError>
+                                $('<%=$this->txtPassword2->ClientID%>').addClassName('error');
+                            </prop:ClientSide.OnValidationError>
+                            <prop:ClientSide.OnValidationSuccess>
+                                $('<%=$this->txtPassword2->ClientID%>').removeClassName('error');
+                            </prop:ClientSide.OnValidationSuccess>
+                        </com:TCompareValidator>
+                    </td> 
+                </tr>
+                <tr>
+                    <td class="left">&nbsp;</td>
+                    <td class="left">
+                        <com:TActiveButton ID="btnPasswordSave" Text="Save" ValidationGroup="configurationpassword" OnClick="saveConfigurationPassword" CssClass="input-submit">
+                            <prop:ClientSide.OnPreDispatch>
+                                $('loading').show();			                                
+                            </prop:ClientSide.OnPreDispatch>
+                            <prop:ClientSide.OnLoading>
+                                $('<%=$this->btnPasswordSave->ClientId%>').disabled='disabled';									
+                            </prop:ClientSide.OnLoading>
+                            <prop:ClientSide.onComplete>
+                                $('<%=$this->btnPasswordSave->ClientId%>').disabled='';																								                                
+                                $('loading').hide();
+                            </prop:ClientSide.OnComplete>
+                        </com:TActiveButton>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <h3 class="tit">Configuration - Photo Profile</h3>             
+        <table class="list">
+            <tr>
+                <td class="left"><com:TActiveImage ID="imgProfile" /> <br />
+                    <com:TActiveFileUpload ID="fileProfile" MaxFileSize="3048576" OnFileUpload="fileUpload" Attributes.OnClick="clearMessage('<%=$this->Result->ClientID%>')" />
+                    <com:TActiveLabel ID="Result" />
+                </td>
+            </tr>
+        </table>                
+	</com:TPanel>	
+</com:TContent>

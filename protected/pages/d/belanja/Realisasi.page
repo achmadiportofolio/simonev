@@ -1,0 +1,347 @@
+<%@ Title="Data Belanja - Realisasi" %>
+<com:TContent ID="leftcontent">
+    <%include Application.pages.d.belanja.LeftMenu%>
+</com:TContent>
+<com:TContent ID="header">Realisasi Anggaran</com:TContent>
+<com:TContent ID="content">	    
+    <com:TActiveHiddenField ID="hiddennilaitarget" />
+    <com:TActiveHiddenField ID="hiddennilairealisasi" />
+    <com:TActiveHiddenField ID="hiddendpa" />
+    <com:TActiveHiddenField ID="hiddenkas" />    
+    <com:TPanel Visible="<%= $this->getViewProcess(false) %>">
+        <p class="msg warning">
+            ID Uraian tidak dikenali.
+        </p>
+    </com:TPanel>
+	<com:TPanel Visible="<%= $this->getEditProcess(false) %>">        
+         <p class="msg warning">
+            Tidak bisa menambah realisasi karena jumlah Rencana target fisik di uraian belum mencapai bobot (<%=$this->jumlahBobot%>%).
+        </p>           
+	</com:TPanel>
+	<com:TPanel Visible="<%= $this->getAddProcess(false) %>">        
+        <%include Application.pages.d.belanja.DataUraian%>       
+        <h3 class="tit">Data Realisasi</h3>
+        <table class="list">            
+            <tr>				
+                <td class="left" width="150">Total Target</td>
+                <td> <%=$this->finance->toRupiah($this->hiddennilaitarget->Value)%></td>
+            </tr>
+            <tr>				
+                <td class="left">Total Realisasi</td>
+                <td> <%=$this->finance->toRupiah($this->hiddennilairealisasi->Value)%></td>
+            </tr>            
+            <tr>				
+                <td class="left">Total Fisik</td>
+                <td> <%=$this->fisikSlider->MaxValue%></td>
+            </tr>            
+            <tr>				
+                <td class="left">Sisa DPA</td>
+                <td> <%=$this->finance->toRupiah($this->hiddendpa->Value)%></td>
+            </tr>
+            <tr>				
+                <td class="left">Sisa Kas</td>
+                <td> <%=$this->finance->toRupiah($this->hiddenkas->Value)%></td>
+            </tr>
+        </table>
+		<h3 class="tit">Tambah Realisasi</h3>		
+        <table class="list">            
+            <tr>				
+                <td class="left" width="150">Bulan</td>
+                <td colspan="2" class="left"><com:TDropDownList ID="cmbAddBulan"/>						
+                </td>
+            </tr>
+            <tr>				
+                <td class="left">Target</td>
+                <td colspan="2" class="left"><com:TActiveTextBox ID="txtAddTarget" Columns="15" Attributes.OnKeyUp="formatangka(this)" Text="0" />
+                    <com:TRequiredFieldValidator ControlToValidate="txtAddTarget" Display="Dynamic" ValidationGroup="addRealisasi" ErrorMessage="Isi Target Realisasi" />
+                    <com:TActiveCustomValidator ID="checkAddTarget" ControlToValidate="txtAddTarget" Display="Dynamic" OnServerValidate="checkPaguUraian" ValidationGroup="addRealisasi" />
+                </td>
+            </tr>
+            <tr>				
+                <td class="left">Realisasi / SP2D (Surat Perintah Pencairan Dana)</td>
+                <td colspan="2" class="left"><com:TActiveTextBox ID="txtAddRealisasi" Columns="15" Attributes.OnKeyUp="formatangka(this)" Text="0" />                    
+                    <com:TRequiredFieldValidator ControlToValidate="txtAddRealisasi" Display="Dynamic" ValidationGroup="addRealisasi" ErrorMessage="Isi Realisasi" />
+                    <com:TActiveCustomValidator ID="checkAddRealisasi" ControlToValidate="txtAddRealisasi" Display="Dynamic" OnServerValidate="checkRealisasi" ValidationGroup="addRealisasi" />
+                </td>
+            </tr>
+            <tr>				
+                <td class="left">Fisik (%)</td>
+                <td width="250" class="left">
+                <com:TSlider id="fisikSlider" ProgressIndicator="false" Direction="Horizontal" OnValueChanged="slider2Changed" MinValue="0">
+                     <prop:ClientSide.onSlide>
+                        $('<%=$this->hiddenAddFisik->clientID%>').value = value;
+                        $('slider2value').innerHTML= value;
+                    </prop:ClientSide.onSlide>                    
+                </com:TSlider>                
+                </td>
+                <td class="left">
+                    <span id="slider2value">0</span>
+                    <com:TActiveHiddenField ID="hiddenAddFisik" Value="0" />                
+                </td>
+            </tr>
+            <tr>
+                <td class="left">&nbsp;</td>
+                <td colspan="2" class="left">
+                    <com:TActiveButton ID="btnSaveData" OnClick="saveData" Text="Save" ValidationGroup="addRealisasi" CssClass="input-submit">
+                        <prop:ClientSide.OnPreDispatch>
+                            $('loadingbar').show();			                                
+                        </prop:ClientSide.OnPreDispatch>
+                        <prop:ClientSide.OnLoading>
+                            $('<%=$this->btnSaveData->ClientId%>').disabled='disabled';									
+                        </prop:ClientSide.OnLoading>
+                        <prop:ClientSide.onComplete>
+                            $('<%=$this->btnSaveData->ClientId%>').disabled='';																								                                
+                            $('loadingbar').hide();
+                        </prop:ClientSide.OnComplete>
+                    </com:TActiveButton>
+                    <a href="<%=$this->Service->constructUrl('d.belanja.Realisasi',array('id'=>$this->session['currentPageRealisasi']['dataUraian']['iduraian']))%>">Cancel</a>
+                </td>
+            </tr>
+        </table>		
+	</com:TPanel>	
+	<com:TPanel Visible="<%= $this->getDefaultProcess() %>">
+        <com:THyperLink ID="uraianAnchor2" Text="Kembali ke Uraian"/>
+        <%include Application.pages.d.belanja.DataUraian%>
+        <div class="controlbox">
+            <p id="btn-create" class="box">
+                <com:TLinkButton ID="btnTambahRealisasi" Text="<span>Tambah Realisasi</span>" OnClick="addProcess" CausesValidation="false" Enabled="<%=$_SESSION['currentPageUraian']['dataKegiatan']['enabled']%>"  />
+                <com:TLinkButton ID="btnTambahPermasalahan" Text="<span>Tambah Permasalahan</span>" OnClick="addPermasalahan" CausesValidation="false" Enabled="<%=$_SESSION['currentPageUraian']['dataKegiatan']['enabled']%>"  />                
+            </p>
+        </div>		
+        <br />
+        <com:TTabPanel ID="RelasiTabPanel" CssClass="tab-panel2" TabCssClass="tab-normal2" ActiveTabCssClass="tab-active2" ViewCssClass="tab-view2">
+            <com:TTabView Caption="Realisasi">
+                <p style="text-align:right">
+                    <com:TActiveCheckBox ID="chkrealisasi" OnCheckedChanged="panelViewChanged" Checked="<%=$_SESSION['currentPageRealisasi']['viewindex']==0?true:false%>">
+                        <prop:ClientSide.OnLoading>
+                            $('<%=$this->chkrealisasi->ClientId%>').disabled='disabled';									
+                        </prop:ClientSide.OnLoading>
+                        <prop:ClientSide.onComplete>
+                            $('<%=$this->chkrealisasi->ClientId%>').disabled='';																								                                                            
+                        </prop:ClientSide.OnComplete>
+                    </com:TActiveCheckBox>                    
+                </p>
+                <com:TActiveRepeater ID="RepeaterS" DataKeyField="idpenggunaan">
+                    <prop:HeaderTemplate>	
+                    <table class="list">		
+                        <thead>
+                            <tr>
+                                <th width="25" rowspan="2" class="left">No</th>
+                                <th width="120" rowspan="2">Bulan</th>
+                                <th width="100" rowspan="2">Tahun</th>
+                                <th width="150" rowspan="2">Pagu Anggaran</th>
+                                <th width="150" rowspan="2">Target</th>				
+                                <th width="150" rowspan="2">Realisasi / SP2D</th>								
+                                <th width="150" rowspan="2">Fisik</th>
+                                <th width="150" colspan="2">Sisa</th>
+                                <th width="160" rowspan="2">Actions</th>
+                            </tr>
+                            <tr align="center" bgcolor="silver">				
+                                <th width="160">DPA</th>
+                                <th width="160">KAS</th>				
+                            </tr>
+                        </thead>
+                        <tbody>
+                    </prop:HeaderTemplate>
+                    <prop:ItemTemplate>
+                        <tr>
+                            <td class="left"><%#$this->Data['no']%></td>
+                            <td class="left"><%#$this->Data['bulan']%></td>	
+                            <td class="center"><%#$this->Data['tahun']%></td>
+                            <td class="right"><%#$this->Data['nilai']%></td>
+                            <td class="right"><%#$this->Data['target']%></td>
+                            <td class="right"><%#$this->Data['realisasi']%></td>
+                            <td class="center"><%#$this->Data['fisik']%></td>
+                            <td class="right"><%#$this->Data['dpa']%></td>
+                            <td class="right"><%#$this->Data['kas']%></td>
+                            <td class="center">                       
+                                <com:TActiveLinkButton Text="Hapus" OnClick="Page.deleteRecord" Enabled="<%=$_SESSION['currentPageUraian']['dataKegiatan']['enabled']%>" />
+                            </td>
+                        </tr>
+                    </prop:ItemTemplate>	
+                    <prop:AlternatingItemTemplate>
+                        <tr>
+                            <td class="left"><%#$this->Data['no']%></td>
+                            <td class="left"><%#$this->Data['bulan']%></td>	
+                            <td class="center"><%#$this->Data['tahun']%></td>
+                            <td class="right"><%#$this->Data['nilai']%></td>
+                            <td class="right"><%#$this->Data['target']%></td>
+                            <td class="right"><%#$this->Data['realisasi']%></td>
+                            <td class="center"><%#$this->Data['fisik']%></td>
+                            <td class="right"><%#$this->Data['dpa']%></td>
+                            <td class="right"><%#$this->Data['kas']%></td>
+                            <td class="center">                       
+                                <com:TActiveLinkButton Text="Hapus" OnClick="Page.deleteRecord" Enabled="<%=$_SESSION['currentPageUraian']['dataKegiatan']['enabled']%>" />
+                            </td>
+                        </tr>
+                    </prop:AlternatingItemTemplate>	            
+                    <prop:FooterTemplate>
+                        <tbody>
+                        </table>
+                    </prop:FooterTemplate>	
+                     <prop:EmptyTemplate>
+                        <p class="msg info">
+                            Belum ada Realisasi.
+                        </p>                
+                    </prop:EmptyTemplate>
+                </com:TActiveRepeater>	
+            </com:TTabView>
+            <com:TTabView Caption="Permasalahan">
+                <p style="text-align:right">
+                    <com:TActiveCheckBox ID="chkpermasalahan" OnCheckedChanged="panelViewChanged" Checked="<%=$_SESSION['currentPageRealisasi']['viewindex']==1?true:false%>">
+                        <prop:ClientSide.OnLoading>
+                            $('<%=$this->chkpermasalahan->ClientId%>').disabled='disabled';									
+                        </prop:ClientSide.OnLoading>
+                        <prop:ClientSide.onComplete>
+                            $('<%=$this->chkpermasalahan->ClientId%>').disabled='';																								                                                            
+                        </prop:ClientSide.OnComplete>
+                    </com:TActiveCheckBox>
+                </p>
+                <com:TActiveRepeater ID="RepeaterPermasalahan" DataKeyField="idproblem">
+                    <prop:HeaderTemplate>	
+                    <table class="list">		
+                        <thead>
+                            <tr>
+                                <th width="25" class="center">No</th>
+                                <th width="120" class="center">Tanggal</th>
+                                <th class="center">Permasalahan</th>                                
+                                <th width="160" class="center">Actions</th>
+                            </tr>                            
+                        </thead>
+                        <tbody>
+                    </prop:HeaderTemplate>
+                    <prop:ItemTemplate>
+                        <tr>
+                            <td class="left"><%#$this->Data['no']%></td>
+                            <td class="left"><%#$this->Page->TGL->tanggal('d F Y',$this->Data['tanggal'])%></td>	
+                            <td class="left"><%#$this->Data['judul']%></td>                            
+                            <td class="center">                       
+                                <com:TActiveLinkButton Text="Hapus" OnClick="Page.deletePermasalahan" ClientSide.PostState="false" Enabled="<%=$_SESSION['currentPageUraian']['dataKegiatan']['enabled']%>" />
+                            </td>
+                        </tr>
+                    </prop:ItemTemplate>	
+                    <prop:AlternatingItemTemplate>
+                        <tr>
+                            <td class="left"><%#$this->Data['no']%></td>
+                            <td class="left"><%#$this->Page->TGL->tanggal('d F Y',$this->Data['tanggal'])%></td>	
+                            <td class="left"><%#$this->Data['judul']%></td>                            
+                            <td class="center">                       
+                                <com:TActiveLinkButton Text="Hapus" OnClick="Page.deletePermasalahan" ClientSide.PostState="false" Enabled="<%=$_SESSION['currentPageUraian']['dataKegiatan']['enabled']%>" />
+                            </td>
+                        </tr>
+                    </prop:AlternatingItemTemplate>	            
+                    <prop:FooterTemplate>
+                        <tbody>
+                        </table>
+                    </prop:FooterTemplate>	
+                     <prop:EmptyTemplate>
+                        <p class="msg info">
+                            Belum ada permasalahan.
+                        </p>                
+                    </prop:EmptyTemplate>
+                </com:TActiveRepeater>	
+            </com:TTabView>
+            <com:TTabView Caption="Photo">
+                <p style="text-align:right">
+                    <com:TActiveCheckBox ID="chkphoto" OnCheckedChanged="panelViewChanged" Checked="<%=$_SESSION['currentPageRealisasi']['viewindex']==2?true:false%>" Text="">                        
+                        <prop:ClientSide.OnLoading>
+                            $('<%=$this->chkphoto->ClientId%>').disabled='disabled';									
+                        </prop:ClientSide.OnLoading>
+                        <prop:ClientSide.onComplete>
+                            $('<%=$this->chkphoto->ClientId%>').disabled='';																								                                                            
+                        </prop:ClientSide.OnComplete>
+                    </com:TActiveCheckBox>
+                </p>
+                <h3 class="tit">Photo Realisasi</h3>		
+                <table class="list">            
+                    <tr>				
+                        <td class="left" width="150">Bulan</td>
+                        <td colspan="2" class="left">
+                            <com:TActiveDropDownList ID="cmbPhotoBulan" />
+                            <com:TRequiredFieldValidator InitialValue="none" ControlToValidate="cmbPhotoBulan" ErrorMessage="Pilih bulan realisasi" Display="Dynamic" ValidationGroup="addphotorealisasi" FocusOnError="true" />
+                        </td>
+                    </tr>
+                    <tr>				
+                        <td class="left">Photo</td>
+                        <td class="left">
+                            <com:TActiveFileUpload ID="cmbPhotoRealisasi" OnFileUpload="fileUploaded" />
+                            <com:TActiveHiddenField ID="hiddenfileuploaded" />
+                            <com:TRequiredFieldValidator ControlToValidate="hiddenfileuploaded" ErrorMessage="Pilih photo yang akan di upload" Display="Dynamic" ValidationGroup="addphotorealisasi" FocusOnError="true" />
+                        </td>
+                    </tr>
+                    <tr>				
+                        <td class="left">Keterangan (Maks: 255 karakter)</td>
+                        <td class="left">
+                            <com:TActiveTextBox ID="txtKeterangan" Columns="40" Rows="4" TextMode="MultiLine" />
+                        </td>
+                    </tr>
+                    <tr>				
+                        <td class="left"></td>
+                        <td class="left">
+                            <com:TActiveButton ID="btnSavePhoto" OnClick="savePhoto" Text="Save" ValidationGroup="addphotorealisasi" CssClass="input-submit" Enabled="<%=$_SESSION['currentPageUraian']['dataKegiatan']['enabled']%>" >
+                                <prop:ClientSide.OnPreDispatch>
+                                    $('loadingbar').show();			                                
+                                </prop:ClientSide.OnPreDispatch>
+                                <prop:ClientSide.OnLoading>
+                                    $('<%=$this->btnSavePhoto->ClientId%>').disabled='disabled';									
+                                </prop:ClientSide.OnLoading>
+                                <prop:ClientSide.onComplete>
+                                    $('<%=$this->btnSavePhoto->ClientId%>').disabled='';																								                                
+                                    $('loadingbar').hide();
+                                </prop:ClientSide.OnComplete>
+                            </com:TActiveButton>
+                        </td>
+                    </tr>                    
+                </table>                
+                <com:TActiveRepeater ID="RepeaterPhoto" DataKeyField="idphoto">
+                    <prop:HeaderTemplate>	
+                    <table class="list">		
+                        <thead>
+                            <tr>
+                                <th width="25" class="center">No</th>
+                                <th width="120" class="center">Photo</th>
+                                <th width="120" class="center">Bulan</th>
+                                <th class="center">Keterangan</th>                                
+                                <th width="160" class="center">Actions</th>
+                            </tr>                            
+                        </thead>
+                        <tbody>
+                    </prop:HeaderTemplate>
+                    <prop:ItemTemplate>
+                        <tr>
+                            <td class="left"><%#$this->DataItem['no']%></td>
+                            <td class="left"><img src="<%#$this->page->setup->getAddress().'/'.$this->DataItem['nama_photo']%>" width="100" height="100" /></td>	
+                            <td class="left"><%#$this->Page->TGL->getMonth(4,$this->DataItem['bulan'])%></td> 
+                            <td class="left"><%#$this->DataItem['keterangan']%></td>                            
+                            <td class="center">                       
+                                <com:TActiveLinkButton Text="Hapus" OnClick="Page.deletePhoto" CommandParameter="<%#$this->DataItem['nama_photo']%>" ClientSide.PostState="false" Enabled="<%=$_SESSION['currentPageUraian']['dataKegiatan']['enabled']%>" />
+                            </td>
+                        </tr>
+                    </prop:ItemTemplate>	
+                    <prop:AlternatingItemTemplate>
+                        <tr>
+                            <td class="left"><%#$this->DataItem['no']%></td>
+                            <td class="left"><img src="<%#$this->page->setup->getAddress().'/'.$this->DataItem['nama_photo']%>" width="100" height="100" /></td>	
+                            <td class="left"><%#$this->Page->TGL->getMonth(4,$this->DataItem['bulan'])%></td> 
+                            <td class="left"><%#$this->DataItem['keterangan']%></td>                            
+                            <td class="center">                       
+                                <com:TActiveLinkButton Text="Hapus" OnClick="Page.deletePhoto" CommandParameter="<%#$this->DataItem['nama_photo']%>" ClientSide.PostState="false" Enabled="<%=$_SESSION['currentPageUraian']['dataKegiatan']['enabled']%>" />
+                            </td>
+                        </tr>
+                    </prop:AlternatingItemTemplate>	            
+                    <prop:FooterTemplate>
+                        <tbody>
+                        </table>
+                    </prop:FooterTemplate>	
+                     <prop:EmptyTemplate>
+                        <p class="msg info">
+                            Belum ada photo uraian.
+                        </p>                
+                    </prop:EmptyTemplate>
+                </com:TActiveRepeater>	
+            </com:TTabView>
+        </com:TTabPanel>		
+	</com:TPanel>
+</com:TContent>
+
+

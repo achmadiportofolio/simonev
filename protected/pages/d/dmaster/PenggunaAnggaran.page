@@ -1,0 +1,126 @@
+<%@ Title="Data Master::Pejabat::Pengguna Anggaran" %>
+<com:TContent ID="leftcontent">
+    <%include Application.pages.d.dmaster.LeftMenu%>
+</com:TContent>
+<com:TContent ID="header">Pengguna Anggaran </com:TContent>
+<com:TContent ID="content">	
+	<com:TPanel Visible="<%= $this->getAddProcess(false) %>">
+		<h3 class="tit">Tambah Pejabat</h3>				
+		<table class="list">
+			<tr>
+				<td class="left">NIP</td>
+				<td class="left"><com:TActiveTextBox ID="txtAddNip" Columns="18" MaxLength="18" Attributes.OnKeyUp="formatangka(this,true)" />
+					<com:TRequiredFieldValidator ControlToValidate="txtAddNip" Display="Dynamic" ErrorMessage="<p class='msg error'>Isi NIP</p>" ValidationGroup="addPenggunaAnggaran" FocusOnError="true" />										
+                    <com:TActiveCustomValidator ID="addNIP" ValidationGroup="addPenggunaAnggaran" Display="Dynamic" ControlToValidate="txtAddNip" FocusOnError="true" OnServerValidate="cekNIP" />					
+				</td>
+			</tr>			
+			</tr>
+			<tr>
+				<td class="left">Nama Pejabat </td>
+				<td class="left"><com:TActiveTextBox ID="txtAddNamaPejabat" Columns="60" MaxLength="60" />
+					<com:TRequiredFieldValidator ControlToValidate="txtAddNamaPejabat" Display="Dynamic" ErrorMessage="<p class='msg error'>Isi Nama Pejabat</p>" ValidationGroup="addPenggunaAnggaran" FocusOnError="true" />										
+				</td>
+			</tr>
+			<tr>
+				<td class="left">&nbsp;</td>
+				<td class="left">
+                    <com:TActiveButton ID="btnSave" Text="Save" ValidationGroup="addPenggunaAnggaran" OnClick="saveData" CssClass="input-submit">
+                        <prop:ClientSide.OnPreDispatch>
+                            $('loadingbar').show();			                                
+                        </prop:ClientSide.OnPreDispatch>
+                        <prop:ClientSide.OnLoading>
+                            $('<%=$this->btnSave->ClientId%>').disabled='disabled';									
+                        </prop:ClientSide.OnLoading>
+                        <prop:ClientSide.onComplete>
+                            $('<%=$this->btnSave->ClientId%>').disabled='';																								                                
+                            $('loadingbar').hide();
+                        </prop:ClientSide.OnComplete>
+                    </com:TActiveButton>
+                </td>
+			</tr>
+		</table>		
+	</com:TPanel>	
+	<com:TPanel Visible="<%= $this->getEditProcess(false) %>">        
+    	<com:TActiveHiddenField ID="hiddennip" />        
+		<h3 class="tit">Edit Pejabat</h3>				
+		<table class="list">		
+			<tr>
+				<td class="left">NIP</td>
+				<td class="left"><com:TActiveTextBox ID="txtEditNip" Columns="18" MaxLength="18" Attributes.OnKeyUp="formatangka(this,true)" />
+					<com:TRequiredFieldValidator ControlToValidate="txtEditNip" Display="Dynamic" ErrorMessage="<p class='msg error'>Isi NIP</p>" ValidationGroup="EditPenggunaAnggaran" FocusOnError="true" />										
+                    <com:TActiveCustomValidator ID="editNIP" ValidationGroup="EditPenggunaAnggaran" Display="Dynamic" ControlToValidate="txtEditNip" FocusOnError="true" OnServerValidate="cekNIP" />					
+				</td>
+			</tr>			
+			<tr>
+				<td class="left">Nama Pejabat</td>
+				<td class="left"><com:TActiveTextBox ID="txtEditNamaPejabat" Columns="60" MaxLength="60" />
+					<com:TRequiredFieldValidator ControlToValidate="txtEditNamaPejabat" Display="Dynamic" ErrorMessage="<p class='msg error'>Isi Nama Pejabat</p>" ValidationGroup="EditPenggunaAnggaran" FocusOnError="true" />										
+				</td>
+			</tr>
+			<tr>
+				<td class="left">&nbsp;</td>
+				<td class="left"><com:TActiveButton ID="btnUpdate" Text="Update" ValidationGroup="EditPenggunaAnggaran" OnClick="updateData" CssClass="input-submit">
+                        <prop:ClientSide.OnPreDispatch>
+                            $('loadingbar').show();			                                
+                        </prop:ClientSide.OnPreDispatch>
+                        <prop:ClientSide.OnLoading>
+                            $('<%=$this->btnUpdate->ClientId%>').disabled='disabled';									
+                        </prop:ClientSide.OnLoading>
+                        <prop:ClientSide.onComplete>
+                            $('<%=$this->btnUpdate->ClientId%>').disabled='';																								                                
+                            $('loadingbar').hide();
+                        </prop:ClientSide.OnComplete>
+                    </com:TActiveButton>
+                </td>
+			</tr>
+		</table>
+		</fieldset>
+	</com:TPanel>
+	
+	<com:TPanel Visible="<%= $this->getDefaultProcess() %>">
+		<div class="controlbox">
+            <p id="btn-create" class="box"><com:TLinkButton Text="<span>Tambah Pejabat</span>" OnClick="SetIdProcess" ID="add" CausesValidation="false" /></p>
+        </div>                
+        <br />		
+        <com:TActiveRepeater ID="RepeaterS" DataKeyField="nip_pengguna_anggaran" AllowPaging="true" PageSize="10" AllowCustomPaging="true">
+            <prop:HeaderTemplate>			
+                <table cellpadding="0" class="list">	
+                    <thead>
+                    <tr>
+                        <th width="15" class="center">No</th>
+                        <th width="160" class="center">NIP</th>
+                        <th class="center">Nama Pejabat</th>                        
+                        <th width="160" class="center">Actions</th>							
+                    </tr>								
+                    </thead>
+                    <tbody>
+            </prop:HeaderTemplate>
+            <prop:ItemTemplate>
+                <tr>				
+                    <td class="center"><%#$this->DataItem['no']%></td>
+                    <td class="center"><%#$this->page->nipFormat($this->DataItem['nip_pengguna_anggaran'])%></td>	
+                    <td class="left"><%#$this->DataItem['nama_pengguna_anggaran']%></td>											                   
+                    <td class="center"><com:TButton CssClass="input-submit"  Text="Edit" OnClick="Page.editRecord" /> <com:TActiveButton CssClass="input-submit" Text="Delete" OnClick="Page.deleteRecord" /></td>
+                </tr>
+            </prop:ItemTemplate>				
+            <prop:AlternatingItemTemplate>
+               <tr>				
+                    <td class="center"><%#$this->DataItem['no']%></td>
+                    <td class="center"><%#$this->page->nipFormat($this->DataItem['nip_pengguna_anggaran'])%></td>		
+                    <td class="left"><%#$this->DataItem['nama_pengguna_anggaran']%></td>											                   
+                    <td class="center"><com:TButton CssClass="input-submit"  Text="Edit" OnClick="Page.editRecord" /> <com:TActiveButton CssClass="input-submit" Text="Delete" OnClick="Page.deleteRecord" /></td>
+                </tr>
+            </prop:AlternatingItemTemplate>
+            <prop:FooterTemplate>               
+                </tbody>
+                </table>
+            </prop:FooterTemplate>	
+            <prop:EmptyTemplate>
+                <p class="msg info">
+                    no record.
+                </p>                
+            </prop:EmptyTemplate>
+        </com:TActiveRepeater>
+        <%include Application.Paging%>			
+	</com:TPanel>
+</com:TContent>

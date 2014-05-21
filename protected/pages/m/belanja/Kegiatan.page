@@ -1,0 +1,162 @@
+<%@ Title="Data Belanja - Kegiatan" %>
+<com:TContent ID="leftcontent">
+    <%include Application.pages.m.belanja.LeftMenu%>
+</com:TContent>
+<com:TContent ID="header">
+    Kegiatan Tahun Anggaran <com:TActiveLabel Text="<%=$this->session['ta']%>" />
+</com:TContent>
+<com:TContent ID="contenttoolbar">
+    <%include Application.layouts.Toolbars%>
+</com:TContent>
+<com:TContent ID="content">	    	
+	<com:TPanel Visible="<%= $this->getDefaultProcess() %>">        				
+        <h3 class="tit">Filters & Search</h3>
+        <table class="list">		
+            <thead>
+                <tr>
+                    <td class="left">Filters</td>
+                </tr>
+            </thead>
+            <tbody>                          
+                <tr>
+                    <td class="left">Unit Kerja :</td>
+                </tr>
+                <tr>
+                    <td class="left">
+                        <com:TActiveDropDownList ID="cmbUnitKerja" OnSelectedIndexChanged="filterUnitKerja">
+                            <prop:ClientSide.OnPreDispatch>
+                                $('loadingbar').show();			                                
+                            </prop:ClientSide.OnPreDispatch>
+                            <prop:ClientSide.OnLoading>
+                                $('<%=$this->cmbUnitKerja->ClientId%>').disabled='disabled';									
+                            </prop:ClientSide.OnLoading>
+                            <prop:ClientSide.onComplete>
+                                $('<%=$this->cmbUnitKerja->ClientId%>').disabled='';																								                                
+                                $('loadingbar').hide();
+                            </prop:ClientSide.OnComplete>    
+                        </com:TActiveDropDownList>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="left">PPTK</td>                    
+                </tr>
+                <tr>
+                    <td class="left">
+                        <com:TActiveDropDownList ID="cmbPPTK" OnSelectedIndexChanged="filterPPTK" Enabled="false">
+                            <prop:ClientSide.OnPreDispatch>
+                                $('loadingbar').show();			                                
+                            </prop:ClientSide.OnPreDispatch>
+                            <prop:ClientSide.OnLoading>
+                                $('<%=$this->cmbPPTK->ClientId%>').disabled='disabled';									
+                            </prop:ClientSide.OnLoading>
+                            <prop:ClientSide.onComplete>
+                                $('<%=$this->cmbPPTK->ClientId%>').disabled='';																								                                
+                                $('loadingbar').hide();
+                            </prop:ClientSide.OnComplete>    
+                        </com:TActiveDropDownList>
+                    </td>                    
+                </tr>
+            </tbody>
+        </table>
+        <table class="list">		
+            <thead>
+                <tr>
+                    <td class="left" colspan="2">Search</td>
+                </tr>
+            </thead>
+            <tbody>                                                              
+                <tr>
+                    <td width="250" class="left">Berdasarkan</td>
+                    <td class="left">
+                        <com:TActiveDropDownList ID="cmbBerdasarkan" AutoPostBack="false">
+                            <com:TListItem Value="kode" Text="Kode Kegiatan" />
+                            <com:TListItem Value="nama" Text="Nama Kegiatan" />
+                        </com:TActiveDropDownList>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="left">Kriteria</td>
+                    <td class="left">
+                        <com:TActiveTextBox ID="txtKriteria" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="left"></td>
+                    <td class="left">
+                        <com:TActiveButton ID="btnSearch" OnClick="filterRecord" Text="Search" ValidationGroup="filterForm" CssClass="input-submit">
+                            <prop:ClientSide.OnPreDispatch>
+                                $('loadingbar').show();			                                
+                            </prop:ClientSide.OnPreDispatch>
+                            <prop:ClientSide.OnLoading>
+                                $('<%=$this->btnSearch->ClientId%>').disabled='disabled';									
+                            </prop:ClientSide.OnLoading>
+                            <prop:ClientSide.onComplete>
+                                $('<%=$this->btnSearch->ClientId%>').disabled='';																								                                
+                                $('loadingbar').hide();
+                            </prop:ClientSide.OnComplete>
+                        </com:TActiveButton>
+                        <com:TRequiredFieldValidator ControlToValidate="txtKriteria" ErrorMessage="Nama kriteria harap di isi" Display="Dynamic" ValidationGroup="filterForm" FocusOnError="true" />
+                    </td>
+                </tr>            
+            </tbody>
+        </table>
+		<com:TActiveRepeater ID="RepeaterS" AllowPaging="true" AllowCustomPaging="true" DataKeyField="idproyek" PageSize="10">
+			<prop:HeaderTemplate>	
+                <table class="list">		
+                    <thead>                          
+                        <tr>
+                            <th width="25" rowspan="2" class="center">No</th>
+                            <th width="120" rowspan="2" class="center">Kode Kegiatan</th>
+                            <th width="400" rowspan="2" class="center">Nama Kegiatan</th>
+                            <th colspan="4" class="center">Realisasi</th>                                                        
+                        </tr>                       
+                        <tr>
+                            <th width="140" class="center">Pagu Dana <br />(Total PAGU pada Uraian)</th>
+                            <th width="130" class="center">SP2D <br /> s.d bulan (<%#$this->page->TGL->tanggal('F',date('Y-').$this->page->session['bulanrealisasi'].date('-d'))%>)</th>
+                            <th width="140" class="center">Realisasi <br /> s.d bulan (<%#$this->page->TGL->tanggal('F',date('Y-').$this->page->session['bulanrealisasi'].date('-d'))%>)</th>				
+                            <th width="100" class="center">Capaian (%) <br />s.d bulan (<%#$this->page->TGL->tanggal('F',date('Y-').$this->page->session['bulanrealisasi'].date('-d'))%>)</th>
+                        </tr>
+                    </thead>
+            </prop:HeaderTemplate>	
+            <prop:ItemTemplate>
+                    <tr>
+                        <td class="center"><%#$this->Data['no']%></td>
+                        <td class="left"><%#$this->Data['kode_proyek']%></td>	
+                        <td class="left">
+                            <%#$this->Data['nama_proyek']%><br />
+                            | <a href="<%#$this->Service->constructUrl('m.belanja.Uraian',array('id'=>$this->DataItem['idproyek']))%>">Uraian</a> |                             
+                            <strong>PPTK : <%#$this->DataItem['nama_pptk']%>
+                        </td>
+                        <td class="right"><%#$this->Data['totalPagu']%></td>
+                        <td class="right"><%#$this->Data['totalTarget']%></td>
+                        <td class="right"><%#$this->Data['totalRealisasi']%></td>
+                        <td class="center" style="<%#$this->DataItem['style']%>"><%#$this->Data['capaian']%></td>                       
+                    </tr>
+            </prop:ItemTemplate>	
+            <prop:AlternatingItemTemplate>
+                    <tr>
+                        <td class="center"><%#$this->Data['no']%></td>
+                        <td class="left"><%#$this->Data['kode_proyek']%></td>	
+                        <td class="left">
+                            <%#$this->Data['nama_proyek']%><br />
+                            | <a href="<%#$this->Service->constructUrl('m.belanja.Uraian',array('id'=>$this->DataItem['idproyek']))%>">Uraian</a> |                             
+                            <strong>PPTK : <%#$this->DataItem['nama_pptk']%>
+                        </td>
+                        <td class="right"><%#$this->Data['totalPagu']%></td>
+                        <td class="right"><%#$this->Data['totalTarget']%></td>
+                        <td class="right"><%#$this->Data['totalRealisasi']%></td>
+                        <td class="center" style="<%#$this->DataItem['style']%>"><%#$this->Data['capaian']%></td>                        
+                    </tr>
+            </prop:AlternatingItemTemplate>	
+            <prop:FooterTemplate>
+                </table>
+            </prop:FooterTemplate>	
+            <prop:EmptyTemplate>
+                <p class="msg info">
+                    Belum ada Kegiatan Pada Program diatas di Tahun Anggaran <%#$this->Page->session['ta']%>.
+                </p>                
+            </prop:EmptyTemplate>
+		</com:TActiveRepeater>		
+		<%include Application.Paging%> 
+	</com:TPanel>
+</com:TContent>

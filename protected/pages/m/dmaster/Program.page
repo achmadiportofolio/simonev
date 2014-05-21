@@ -1,0 +1,335 @@
+<%@ Title="Data Master::Program" %>
+<com:TContent ID="leftcontent">
+    <%include Application.pages.m.dmaster.LeftMenu%>
+</com:TContent>
+<com:TContent ID="header">
+    Program Tahun Anggaran <com:TActiveLabel Text="<%=$this->session['ta']%>" />
+</com:TContent>
+<com:TContent ID="contenttoolbar">
+    <%include Application.layouts.Toolbars%>
+</com:TContent>
+<com:TContent ID="content">	    
+    <com:TActiveHiddenField ID="txtIdProgram" />
+    <com:TPanel Visible="<%= $this->getViewProcess() %>">		
+        <h3 class="tit">Menyalin Program Untuk T.A <%=$this->session['ta']%></h3>	
+        <p class="msg warning">
+            Pada saat menekan tombol COPY, maka system akan menghapus program yang telah di inputkan pada T.A <%=$this->session['ta']%>, yang berakibat pada terhapusnya data kegiatan pada T.A <%=$this->session['ta']%>.
+        </p> 
+        <table width="100%" class="list">
+            <tr>
+                <td width="250" class="left">Salin dari Program Kerja Tahun Anggaran</td>
+                <td class="left">
+                    <com:TActiveDropDownList ID="cmbTahunAnggaran" AutoPostBack="false" />
+                    <com:TActiveButton ID="btnCopy" Text="Copy" CssClass="input-submit" OnClick="copyProgram" Attributes.OnClick="clearMessage('<%=$this->errormessage->ClientID%>')">
+                        <prop:ClientSide.OnPreDispatch>
+                            $('loadingbar').show();			                                
+                        </prop:ClientSide.OnPreDispatch>
+                        <prop:ClientSide.OnLoading>
+                            $('<%=$this->btnCopy->ClientId%>').disabled='disabled';									
+                            $('<%=$this->cmbTahunAnggaran->ClientId%>').disabled='disabled';									
+                        </prop:ClientSide.OnLoading>
+                        <prop:ClientSide.onComplete>
+                            $('<%=$this->btnCopy->ClientId%>').disabled='';																								                                
+                            $('<%=$this->cmbTahunAnggaran->ClientId%>').disabled='';									
+                            $('loadingbar').hide();
+                        </prop:ClientSide.OnComplete>
+                    </com:TActiveButton>
+                    <com:TActiveLabel ID="errormessage" />
+                </td>
+            </tr>
+        </table>        
+        <com:TActiveRepeater ID="RepeaterProgramS">
+            <prop:HeaderTemplate>			
+                <table cellpadding="0" class="list">	
+                    <thead>
+                    <tr>
+                        <th width="15" class="center">No</th>
+                        <th width="150" class="center">Kode</th>
+                        <th class="center">Nama Program</th>                                               
+                    </tr>								
+                    </thead>
+                    <tbody>
+            </prop:HeaderTemplate>
+            <prop:ItemTemplate>
+                <tr>				
+                    <td class="center"><%#$this->DataItem['no']%></td>
+                    <td class="center"><%#$this->DataItem['kode_program']%></td>	
+                    <td class="left"><%#$this->DataItem['nama_program']%></td>											                                       
+                </tr>
+            </prop:ItemTemplate>				
+            <prop:AlternatingItemTemplate>
+                 <tr>				
+                    <td class="center"><%#$this->DataItem['no']%></td>
+                    <td class="center"><%#$this->DataItem['kode_program']%></td>	
+                    <td class="left"><%#$this->DataItem['nama_program']%></td>											                                        
+                </tr>
+            </prop:AlternatingItemTemplate>
+            <prop:FooterTemplate>               
+                </tbody>
+                </table>
+            </prop:FooterTemplate>	
+            <prop:EmptyTemplate>
+                <p class="msg info">
+                    Pada Tahun Anggaran <%#$this->Page->session['ta']%> belum ada Program.
+                </p>                
+            </prop:EmptyTemplate>
+        </com:TActiveRepeater>
+    </com:TPanel>
+	<com:TPanel Visible="<%= $this->getAddProcess() %>">		
+        <com:TActiveHiddenField ID="txtAddIdSatKer" />
+		<h3 class="tit">Tambah Program</h3>	
+        <table width="100%" class="list">	
+            <tr>
+				<td class="left">Bagian</td>
+            </tr>
+            <tr>
+				<td class="left"><com:TActiveDropDownList ID="cmbAddBagian" OnSelectedIndexChanged="changeStruktur" />		
+                    <com:TRequiredFieldValidator ControlToValidate="cmbAddBagian" InitialValue="none" Display="Dynamic" ErrorMessage="<p class='msg error'>Pilih Nama Bagian</p>" ValidationGroup="addUnitKerja" FocusOnError="true" />				
+                </td>
+			</tr>
+			<tr>
+				<td class="left">Unit Kerja</td>
+            </tr>
+            <tr>
+                <td class="left">
+                    <com:TActiveDropDownList ID="cmbAddUnitKerja" OnSelectedIndexChanged="changeStruktur" Enabled="false" />
+                    <com:TRequiredFieldValidator InitialValue="none" ControlToValidate="cmbAddUnitKerja" Display="Dynamic" ErrorMessage="<p class='msg error'>Pilih Unit Kerja</p>" ValidationGroup="addProgram" FocusOnError="true" />			
+                    <com:TRequiredFieldValidator ControlToValidate="txtAddIdSatKer" Display="Dynamic" ErrorMessage="<p class='msg error'>Pilih Unit Kerja</p>" ValidationGroup="addProgram" FocusOnError="true" />	
+                </td>
+            </tr>            
+            <tr>
+                <td class="left">Kode Program</td>
+            </tr>            
+            <tr>
+                <td class="left">
+                    <com:TActiveLabel ID="lblAddSatKer" ForeColor="red" />
+                    <com:TActiveTextBox ID="txtAddKodeProgram" Columns="4" MaxLength="4" Attributes.OnKeyUp="formatangka(this,true)" />			
+                    <com:TRequiredFieldValidator ControlToValidate="txtAddKodeProgram" Display="Dynamic" ErrorMessage="<p class='msg error'>Isi Kode Program</p>" ValidationGroup="addProgram" FocusOnError="true" />			
+                    <com:TActiveCustomValidator ID="addKodeProgram" ControlToValidate="txtAddKodeProgram" Display="Dynamic" OnServerValidate="checkId" ValidationGroup="addProgram" ErrorMessage="<p class='msg error'>Kode Program Yang Anda Inputkan Sudah Ada</p>" FocusOnError="true" />
+                </td>
+            </tr>
+            <tr>
+                <td class="left">Nama Program</td>
+            </tr>            
+            <tr>
+                <td class="left"><com:TTextBox ID="txtAddNamaProgram" Columns="60" />
+                <com:TRequiredFieldValidator ControlToValidate="txtAddNamaProgram" Display="Dynamic" ErrorMessage="<p class='msg error'>Isi Nama Program</p>" ValidationGroup="addProgram" FocusOnError="true" />				
+            </td>                
+            <tr>                
+                <td class="left">
+                    <com:TActiveButton ID="btnAddSave" Text="Save" CssClass="input-submit" ValidationGroup="addProgram" OnClick="saveData">
+                        <prop:ClientSide.OnPreDispatch>
+                            $('loadingbar').show();			                                
+                        </prop:ClientSide.OnPreDispatch>
+                        <prop:ClientSide.OnLoading>
+                            $('<%=$this->btnAddSave->ClientId%>').disabled='disabled';									
+                        </prop:ClientSide.OnLoading>
+                        <prop:ClientSide.onComplete>
+                            $('<%=$this->btnAddSave->ClientId%>').disabled='';																								                                
+                            $('loadingbar').hide();
+                        </prop:ClientSide.OnComplete>
+                    </com:TActiveButton>
+                </td>
+            </tr>
+        </table>		
+	</com:TPanel>
+	<com:TPanel Visible="<%= $this->getEditProcess() %>">	
+		<com:THiddenField ID="txtEditKodeProgram2" />
+		<h3 class="tit">Edit Program</h3>	
+        <table width="100%" class="list">	
+            <tr>
+                <td width="150" class="left">Kode Satuan Kerja</td>
+                <td><com:TActiveLabel ID="lblEditSatKer" ForeColor="red" /></td>
+            </tr>	
+            <tr>
+                <td class="left">Kode Program</td>
+                <td class="left"><com:TActiveHiddenField ID="txtEditIdSatKer" />						
+                    <com:TTextBox ID="txtEditKodeProgram" Columns="4" MaxLength="4" />
+                    <com:TRequiredFieldValidator ControlToValidate="txtEditKodeProgram" Display="Dynamic" ErrorMessage="<p class='msg error'>Isi Kode Program</p>" ValidationGroup="editProgram" FocusOnError="true" />				
+                    <com:TActiveCustomValidator ID="editKodeProgram" ControlToValidate="txtEditKodeProgram" Display="Dynamic" OnServerValidate="checkId" ValidationGroup="editProgram" ErrorMessage="<p class='msg error'>Kode Program Yang Anda Inputkan Sudah Ada ...</p>" FocusOnError="true" />
+                </td>
+            </tr>
+            <tr>				
+                <td class="left">Nama Program</td>
+                <td class="left"><com:TTextBox ID="txtEditNamaProgram" Columns="60" />
+                    <com:TRequiredFieldValidator ControlToValidate="txtEditNamaProgram" Display="Dynamic" ErrorMessage="<p class='msg error'>Isi Nama Program</p>" ValidationGroup="editProgram" FocusOnError="true" />				
+                </td>
+            </tr>	
+            <tr>				
+                <td class="left">Tahun</td>
+                <td class="left"><com:TDropDownList ID="cmbEditTahun" />
+                    <com:TRequiredFieldValidator ControlToValidate="cmbEditTahun" InitialValue="none" Display="Dynamic" ErrorMessage="<p class='msg error'>Isi Tahun</p>" ValidationGroup="editProgram" FocusOnError="true" />				
+                </td>
+            </tr>
+            <tr>
+                <td class="left">&nbsp;</td>
+                <td class="left">
+                    <com:TActiveButton ID="btnEditSave" Text="Update" CssClass="input-submit" ValidationGroup="editProgram" OnClick="updateData">
+                        <prop:ClientSide.OnPreDispatch>
+                            $('loadingbar').show();			                                
+                        </prop:ClientSide.OnPreDispatch>
+                        <prop:ClientSide.OnLoading>
+                            $('<%=$this->btnEditSave->ClientId%>').disabled='disabled';									
+                        </prop:ClientSide.OnLoading>
+                        <prop:ClientSide.onComplete>
+                            $('<%=$this->btnEditSave->ClientId%>').disabled='';																								                                
+                            $('loadingbar').hide();
+                        </prop:ClientSide.OnComplete>
+                    </com:TActiveButton>
+                </td>
+            </tr>
+        </table>		
+	</com:TPanel>
+	<com:TPanel Visible="<%= $this->getDefaultProcess() %>">
+        <com:NModalPanel ID="modalDelete" DefaultButton="btnDelete">
+            <div style="width:700px;position: fixed;top: 90px;left: 400px;z-index: 2000;">        
+                <table class="list">
+                    <thead>
+                        <tr>
+                            <td colspan="2" class="left">Delete Program Tahun Anggaran <%=$_SESSION['ta']%></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td class="left" width="150">
+                            Kode Program
+                        </td>
+                        <td class="left">
+                            <com:TActiveLabel ID="txtKodeProgram" />
+                        </td>                                    
+                    </tr>
+                    <tr>
+                        <td class="left" width="150">
+                            Nama Program
+                        </td>
+                        <td class="left">
+                            <com:TActiveLabel ID="txtNamaProgram" />
+                        </td>                                    
+                    </tr>
+                    <tr>
+                        <td class="left" width="150">
+                            Total Kegiatan
+                        </td>
+                        <td class="left">
+                            <com:TActiveLabel ID="txtTotalKegiatan" />
+                        </td>                                    
+                    </tr>
+                    <tr>
+                        <td class="left" width="150">
+                            Total Pagu
+                        </td>
+                        <td class="left">
+                            <com:TActiveLabel ID="txtTotalPagu" />
+                        </td>                                    
+                    </tr>
+                    <tr>
+                        <td class="left" width="150">
+                            Total Realisasi
+                        </td>
+                        <td class="left">
+                            <com:TActiveLabel ID="txtTotalRealisasi" />
+                        </td>                                    
+                    </tr>
+                    <tr>
+                        <td class="left">
+                            &nbsp;
+                        </td>
+                        <td class="left">
+                            Dengan menghapus program ini, maka seluruh kegiatan dan realisasinya ikut terhapus.
+                            <com:TActiveButton ID="btnDelete" Text="Delete" OnClick="Page.deleteRecord" CssClass="input-submit">                    
+                                <prop:ClientSide.OnPreDispatch>
+                                    $('loadingdelete').show(); 
+                                </prop:ClientSide.OnPreDispatch>
+                                <prop:ClientSide.OnLoading>
+                                    $('<%=$this->btnDelete->ClientId%>').disabled='disabled';						
+                                </prop:ClientSide.OnLoading>
+                                <prop:ClientSide.OnComplete>																	
+                                    $('<%=$this->btnDelete->ClientId%>').disabled='';						                            
+                                    $('loadingdelete').hide(); 
+                                </prop:ClientSide.OnComplete>
+                            </com:TActiveButton>   
+                            <a href="#" Class="btn btn-black btn-cross" OnClick="new Modal.Box('<%=$this->modalDelete->ClientID%>').hide()"><span></span>Cancel</a>
+                            <img id="loadingdelete" src="<%=$this->Page->Theme->baseUrl%>/design/ajax-loader-1.gif" style="display:none;" />
+                        </td>                                    
+                    </tr>
+                </table>        
+            </div>
+        </com:NModalPanel>
+        <div class="controlbox">
+            <p id="btn-create" class="box">
+                <com:TLinkButton Text="<span>Tambah Program</span>" OnClick="addProcess" ID="add" CausesValidation="false" />
+                <com:TLinkButton Text="<span>Copy Program</span>" OnClick="copyProcess" CausesValidation="false" />
+            </p>
+        </div>                
+        <h3 class="tit">Filters & Search</h3>        
+        <table class="list">		
+            <thead>
+                <tr>
+                    <td class="left" colspan="2">Filter</td>
+                </tr>
+            </thead>
+            <tbody>                                                              
+                <tr>
+                    <td width="250" class="left">Unit Kerja</td>
+                    <td class="left">
+                        <com:TActiveDropDownList ID="cmbUnitKerja" OnSelectedIndexChanged="changeUnitKerja">
+                            <prop:ClientSide.OnPreDispatch>
+                                $('loadingbar').show(); 
+                            </prop:ClientSide.OnPreDispatch>
+                            <prop:ClientSide.OnLoading>
+                                $('<%=$this->cmbUnitKerja->ClientId%>').disabled='disabled';						
+                            </prop:ClientSide.OnLoading>
+                            <prop:ClientSide.OnComplete>																	
+                                $('<%=$this->cmbUnitKerja->ClientId%>').disabled='';						                            
+                                $('loadingbar').hide(); 
+                            </prop:ClientSide.OnComplete>
+                        </com:TActiveDropDownList>
+                    </td>
+                </tr>               
+            </tbody>
+        </table>
+		<com:TActiveRepeater ID="RepeaterS" DataKeyField="idprogram" AllowPaging="true" PageSize="10" AllowCustomPaging="true">
+            <prop:HeaderTemplate>			
+                <table cellpadding="0" class="list">	
+                    <thead>
+                    <tr>
+                        <th width="15" class="center">No</th>
+                        <th width="110" class="center">Kode</th>
+                        <th class="center">Nama Program</th>                        
+                        <th class="center" width="250">Unit Kerja</th>
+                        <th width="130" class="center">Actions</th>							
+                    </tr>								
+                    </thead>
+                    <tbody>
+            </prop:HeaderTemplate>
+            <prop:ItemTemplate>
+                <tr>				
+                    <td class="center"><%#$this->DataItem['no']%></td>
+                    <td class="center"><%#$this->DataItem['kode_program']%></td>	
+                    <td class="left"><%#$this->DataItem['nama_program']%></td>											                   
+                    <td class="left"><%#$this->DataItem['nama_unit']%></td>
+                    <td class="center"><com:TButton CssClass="input-submit"  Text="Edit" OnClick="Page.editRecord" /> <com:TActiveButton CssClass="input-submit" Text="Delete" OnClick="Page.showModalDelete" /></td>
+                </tr>
+            </prop:ItemTemplate>				
+            <prop:AlternatingItemTemplate>
+                 <tr>				
+                    <td class="center"><%#$this->DataItem['no']%></td>
+                    <td class="center"><%#$this->DataItem['kode_program']%></td>	
+                    <td class="left"><%#$this->DataItem['nama_program']%></td>											                   
+                    <td class="left"><%#$this->DataItem['nama_unit']%></td>
+                    <td class="center"><com:TButton CssClass="input-submit"  Text="Edit" OnClick="Page.editRecord" /> <com:TActiveButton CssClass="input-submit" Text="Delete" OnClick="Page.showModalDelete" /></td>
+                </tr>
+            </prop:AlternatingItemTemplate>
+            <prop:FooterTemplate>               
+                </tbody>
+                </table>
+            </prop:FooterTemplate>	
+            <prop:EmptyTemplate>
+                <p class="msg info">
+                    Pada Tahun Anggaran <%#$this->Page->session['ta']%> belum ada Program.
+                </p>                
+            </prop:EmptyTemplate>
+        </com:TActiveRepeater>
+        <%include Application.Paging%> 
+	</com:TPanel>
+</com:TContent>

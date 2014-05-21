@@ -1,0 +1,125 @@
+<%@ Title="Data Master::Bagian / Urusan" %>
+<com:TContent ID="leftcontent">
+    <%include Application.pages.m.dmaster.LeftMenu%>
+</com:TContent>
+<com:TContent ID="header">Bagian / Urusan</com:TContent>
+<com:TContent ID="content">
+	<com:TPanel Visible="<%= $this->getAddProcess(false) %>">		
+		<h3 class="tit">Tambah Bagian / Urusan</h3>	
+		<table class="list">			
+			<tr>
+				<td class="left">Kode Bagian</td>
+				<td class="left">								
+				<com:TActiveTextBox ID="txtAddKodeBagian" Columns="4" MaxLength="4" />				
+				<com:TRequiredFieldValidator ControlToValidate="txtAddKodeBagian" Display="Dynamic" ErrorMessage="<p class='msg error'>Isi Kode Bagian</p>" ValidationGroup="addBagian" FocusOnError="true" />				
+                <com:TActiveCustomValidator ID="checkAddKodeBagian" ControlToValidate="txtAddKodeBagian" Display="Dynamic" OnServerValidate="checkKodeBagian" ValidationGroup="addBagian" ErrorMessage="<p class='msg error'>Kode Bagian Yang Anda Inputkan Sudah Ada</p>" FocusOnError="true" />					
+			</td>
+			<tr>
+				<td class="left">Nama Bagian</td>
+				<td class="left">								
+				<com:TActiveTextBox ID="txtAddNamaBagian" Columns="30" />		
+				<com:TRequiredFieldValidator ControlToValidate="txtAddNamaBagian" Display="Dynamic" ErrorMessage="<p class='msg error'>Isi Nama Bagian</p>" ValidationGroup="addBagian" FocusOnError="true" />				
+				</td>		
+			</tr>
+			<tr>
+				<td class="left">&nbsp;</td>
+				<td class="left"><com:TActiveButton ID="btnSave" Text="Save" ValidationGroup="addBagian" OnClick="saveData" CssClass="input-submit">
+                        <prop:ClientSide.OnPreDispatch>
+                            $('loadingbar').show();			                                
+                        </prop:ClientSide.OnPreDispatch>
+                        <prop:ClientSide.OnLoading>
+                            $('<%=$this->btnSave->ClientId%>').disabled='disabled';									
+                        </prop:ClientSide.OnLoading>
+                        <prop:ClientSide.onComplete>
+                            $('<%=$this->btnSave->ClientId%>').disabled='';																								                                
+                            $('loadingbar').hide();
+                        </prop:ClientSide.OnComplete>
+                    </com:TActiveButton>
+                </td>
+			</tr>
+		</table>		
+	</com:TPanel>
+	<com:TPanel Visible="<%= $this->getEditProcess(false) %>">
+        <com:THiddenField ID="hiddenid" Visible="false" />
+		<com:THiddenField ID="hiddenkodebagian" Visible="false" />	
+		<h3 class="tit">Edit Bagian / Urusan</h3>
+		<table class="list">			
+			<tr>
+				<td class="left" width="150">Kode Bagian</td>
+				<td class="left">				                    			
+                    <com:TActiveTextBox ID="txtEditKodeBagian" Columns="4" MaxLength="4" />				
+                    <com:TRequiredFieldValidator ControlToValidate="txtEditKodeBagian" Display="Dynamic" ErrorMessage="<p class='msg error'>Isi Kode Bagian</p>" ValidationGroup="editBagian" FocusOnError="true" />				
+                    <com:TActiveCustomValidator ID="checkEditKodeBagian" ControlToValidate="txtEditKodeBagian" Display="Dynamic" OnServerValidate="checkKodeBagian" ValidationGroup="editBagian" ErrorMessage="Kode Bagian Yang Anda Inputkan Sudah Ada" FocusOnError="true" />					
+                </td>
+			<tr>
+				<td class="left">Nama Bagian</td>
+				<td class="left">								
+                    <com:TActiveTextBox ID="txtEditNamaBagian" Columns="30" />		
+                    <com:TRequiredFieldValidator ControlToValidate="txtEditNamaBagian" Display="Dynamic" ErrorMessage="<p class='msg error'>Isi Nama Bagian</p>" ValidationGroup="editBagian" FocusOnError="true" />				
+				</td>		
+			</tr>
+			<tr>
+				<td class="left">&nbsp;</td>
+				<td class="left"><com:TActiveButton ID="btnUpdate" Text="Update" ValidationGroup="editBagian" OnClick="updateData" CssClass="input-submit">
+                        <prop:ClientSide.OnPreDispatch>
+                            $('loadingbar').show();			                                
+                        </prop:ClientSide.OnPreDispatch>
+                        <prop:ClientSide.OnLoading>
+                            $('<%=$this->btnUpdate->ClientId%>').disabled='disabled';									
+                        </prop:ClientSide.OnLoading>
+                        <prop:ClientSide.onComplete>
+                            $('<%=$this->btnUpdate->ClientId%>').disabled='';																								                                
+                            $('loadingbar').hide();
+                        </prop:ClientSide.OnComplete>
+                    </com:TActiveButton>
+                </td>
+			</tr>
+		</table>		
+	</com:TPanel>
+	<com:TPanel Visible="<%= $this->getDefaultProcess() %>">
+        <div class="controlbox">
+            <p id="btn-create" class="box"><com:TLinkButton Text="<span>Tambah Bagian</span>" OnClick="setIdProcess" ID="add" CausesValidation="false" /></p>
+        </div>                
+        <br />
+		<com:TActiveRepeater ID="RepeaterS" DataKeyField="idbagian" AllowPaging="true" PageSize="10" AllowCustomPaging="true">
+            <prop:HeaderTemplate>			
+                <table cellpadding="0" class="list">	
+                    <thead>
+                    <tr>
+                        <th width="15" class="center">No</th>
+                        <th width="100" class="center">Kode Bagian</th>
+                        <th class="center">Nama Bagian</th>                        
+                        <th width="160" class="center">Actions</th>							
+                    </tr>								
+                    </thead>
+                    <tbody>
+            </prop:HeaderTemplate>
+            <prop:ItemTemplate>
+                <tr>				
+                    <td class="center"><%#$this->DataItem['no']%></td>
+                    <td class="center"><%#$this->DataItem['kode_bagian']%></td>	
+                    <td class="left"><%#$this->DataItem['nama_bagian']%></td>											                   
+                    <td class="center"><com:TButton CssClass="input-submit"  Text="Edit" OnClick="Page.editRecord" /> <com:TActiveButton CssClass="input-submit" Text="Delete" OnClick="Page.deleteRecord" ClientSide.PostState="false" Attributes.OnClick="if(!confirm('Dengan menghapus ini maka unit kerja, program, dst; akan ikut terhapus juga ?')) return false;" /></td>
+                </tr>
+            </prop:ItemTemplate>				
+            <prop:AlternatingItemTemplate>
+               <tr>				
+                    <td class="center"><%#$this->DataItem['no']%></td>
+                    <td class="center"><%#$this->DataItem['kode_bagian']%></td>	
+                    <td class="left"><%#$this->DataItem['nama_bagian']%></td>											                   
+                    <td class="center"><com:TButton CssClass="input-submit"  Text="Edit" OnClick="Page.editRecord" /> <com:TActiveButton CssClass="input-submit" Text="Delete" OnClick="Page.deleteRecord" ClientSide.PostState="false" Attributes.OnClick="if(!confirm('Dengan menghapus ini maka unit kerja, program, dst; akan ikut terhapus juga ?')) return false;" /></td>
+                </tr>
+            </prop:AlternatingItemTemplate>
+            <prop:FooterTemplate>               
+                </tbody>
+                </table>
+            </prop:FooterTemplate>	
+            <prop:EmptyTemplate>
+                <p class="msg info">
+                    no record.
+                </p>                
+            </prop:EmptyTemplate>
+        </com:TActiveRepeater>
+        <%include Application.Paging%> 				
+	</com:TPanel>
+</com:TContent>

@@ -1,0 +1,111 @@
+<%@ Title="Data Master::Jenis Kegiatan" %>
+<com:TContent ID="leftcontent">
+    <%include Application.pages.m.dmaster.LeftMenu%>
+</com:TContent>
+<com:TContent ID="header">Jenis Kegiatan</com:TContent>
+<com:TContent ID="content">	
+	<com:TPanel Visible="<%= $this->getAddProcess(false) %>">
+		<h3 class="tit">Tambah Jenis Kegiatan</h3>				
+		<table class="list">
+			<tr>
+				<td class="left" width="150">Nama Jenis</td>
+				<td class="left"><com:TActiveTextBox ID="txtAddJenis" Columns="25" />
+					<com:TRequiredFieldValidator ControlToValidate="txtAddJenis" Display="Dynamic" ErrorMessage="<p class='msg error'>Isi NIP</p>" ValidationGroup="addJenisKegiatan" FocusOnError="true" />										
+                    <com:TActiveCustomValidator ID="addJenis" ValidationGroup="addJenisKegiatan" Display="Dynamic" ControlToValidate="txtAddJenis" FocusOnError="true" OnServerValidate="checkJenisKegiatan" />					
+				</td>
+			</tr>									
+			<tr>
+				<td class="left">&nbsp;</td>
+				<td class="left">
+                    <com:TActiveButton ID="btnSave" Text="Save" ValidationGroup="addJenisKegiatan" OnClick="saveData" CssClass="input-submit">
+                        <prop:ClientSide.OnPreDispatch>
+                            $('loadingbar').show();			                                
+                        </prop:ClientSide.OnPreDispatch>
+                        <prop:ClientSide.OnLoading>
+                            $('<%=$this->btnSave->ClientId%>').disabled='disabled';									
+                        </prop:ClientSide.OnLoading>
+                        <prop:ClientSide.onComplete>
+                            $('<%=$this->btnSave->ClientId%>').disabled='';																								                                
+                            $('loadingbar').hide();
+                        </prop:ClientSide.OnComplete>
+                    </com:TActiveButton>
+                </td>
+			</tr>
+		</table>		
+	</com:TPanel>
+	
+	<com:TPanel Visible="<%= $this->getEditProcess(false) %>">
+	<com:TActiveHiddenField ID="hiddenjenis" />
+		<h3 class="tit">Edit Pejabat</h3>				
+		<table class="list">		
+			<tr>
+				<td class="left" width="150">Nama Jenis</td>
+				<td class="left"><com:TActiveTextBox ID="txtEditJenis" Columns="25" />
+					<com:TRequiredFieldValidator ControlToValidate="txtEditJenis" Display="Dynamic" ErrorMessage="<p class='msg error'>Isi NIP</p>" ValidationGroup="editJenisKegiatan" FocusOnError="true" />										
+                    <com:TActiveCustomValidator ID="editJenis" ValidationGroup="editJenisKegiatan" Display="Dynamic" ControlToValidate="txtEditJenis" FocusOnError="true" OnServerValidate="checkJenisKegiatan" />					
+				</td>
+			</tr>	
+			<tr>
+				<td class="left">&nbsp;</td>
+				<td class="left"><com:TActiveButton ID="btnUpdate" Text="Update" ValidationGroup="editJenisKegiatan" OnClick="updateData" CssClass="input-submit">
+                        <prop:ClientSide.OnPreDispatch>
+                            $('loadingbar').show();			                                
+                        </prop:ClientSide.OnPreDispatch>
+                        <prop:ClientSide.OnLoading>
+                            $('<%=$this->btnUpdate->ClientId%>').disabled='disabled';									
+                        </prop:ClientSide.OnLoading>
+                        <prop:ClientSide.onComplete>
+                            $('<%=$this->btnUpdate->ClientId%>').disabled='';																								                                
+                            $('loadingbar').hide();
+                        </prop:ClientSide.OnComplete>
+                    </com:TActiveButton>
+                </td>
+			</tr>
+		</table>
+		</fieldset>
+	</com:TPanel>
+	
+	<com:TPanel Visible="<%= $this->getDefaultProcess() %>">
+		<div class="controlbox">
+            <p id="btn-create" class="box"><com:TLinkButton Text="<span>Tambah Jenis</span>" OnClick="SetIdProcess" ID="add" CausesValidation="false" /></p>
+        </div>                
+        <br />		
+        <com:TActiveRepeater ID="RepeaterS" DataKeyField="idjenis_kegiatan" AllowPaging="true" PageSize="10" AllowCustomPaging="true">
+            <prop:HeaderTemplate>			
+                <table cellpadding="0" class="list">	
+                    <thead>
+                    <tr>
+                        <th width="15" class="left">No</th>                        
+                        <th class="left">Nama Jenis</th>                        
+                        <th width="160" class="left">Actions</th>							
+                    </tr>								
+                    </thead>
+                    <tbody>
+            </prop:HeaderTemplate>
+            <prop:ItemTemplate>
+                <tr>				
+                    <td class="left"><%#$this->DataItem['no']%></td>                    
+                    <td class="left"><%#$this->DataItem['nama_jenis']%></td>											                   
+                    <td class="left"><com:TButton CssClass="input-submit"  Text="Edit" OnClick="Page.editRecord" /> <com:TActiveButton CssClass="input-submit" Text="Delete" OnClick="Page.deleteRecord" /></td>
+                </tr>
+            </prop:ItemTemplate>				
+            <prop:AlternatingItemTemplate>
+               <tr>				
+                    <td class="left"><%#$this->DataItem['no']%></td>                    
+                    <td class="left"><%#$this->DataItem['nama_jenis']%></td>											                   
+                    <td class="left"><com:TButton CssClass="input-submit"  Text="Edit" OnClick="Page.editRecord" /> <com:TActiveButton CssClass="input-submit" Text="Delete" OnClick="Page.deleteRecord" /></td>
+                </tr>
+            </prop:AlternatingItemTemplate>
+            <prop:FooterTemplate>               
+                </tbody>
+                </table>
+            </prop:FooterTemplate>	
+            <prop:EmptyTemplate>
+                <p class="msg info">
+                    no record.
+                </p>                
+            </prop:EmptyTemplate>
+        </com:TActiveRepeater>
+        <%include Application.Paging%>			
+	</com:TPanel>
+</com:TContent>

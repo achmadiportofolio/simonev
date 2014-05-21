@@ -1,0 +1,117 @@
+<%@ Title="Data Master::Rekening::Transaksi" %>
+<com:TContent ID="leftcontent">
+    <%include Application.pages.m.dmaster.LeftMenu%>
+</com:TContent>
+<com:TContent ID="header">Transaksi</com:TContent>
+<com:TContent ID="content">
+	<com:TPanel Visible="<%= $this->getAddProcess(false) %>">
+		<h3 class="tit">Tambah Rekening</h3>	
+		<table class="list">
+			<tr>
+				<td class="left" width="150">Kode Transaksi</td>
+				<td><com:TActiveTextBox ID="txtAddKodeTransaksi" Columns="1" MaxLength="1" Attributes.OnKeyUp="formatangka(this,true)" />
+					<com:TRequiredFieldValidator ControlToValidate="txtAddKodeTransaksi" Display="Dynamic" ErrorMessage="<p class='msg error'>Isi Kode Transaksi</p>" ValidationGroup="addTransaksi" FocusOnError="true" />
+					<com:TActiveCustomValidator ID="checkAddKodeTransaksi" ControlToValidate="txtAddKodeTransaksi" Display="Dynamic" OnServerValidate="checkKodeTransaksi" ValidationGroup="addTransaksi" ErrorMessage="<p class='msg error'>Kode Transaksi Yang Anda Inputkan Sudah Ada</p>" FocusOnError="true" />					
+				</td>
+			</tr>
+			<tr>
+				<td class="left">Nama Transaksi</td>
+				<td><com:TActiveTextBox ID="txtAddNamaTransaksi" Columns="25" />
+				<com:TRequiredFieldValidator ControlToValidate="txtAddNamaTransaksi" Display="Dynamic" ErrorMessage="<p class='msg error'>Isi Nama Transaksi</p>" ValidationGroup="addTransaksi" />				
+			</td>
+			</tr>
+			<tr>
+				<td class="left">&nbsp;</td>
+				<td><com:TActiveButton ID="btnSave" Text="Save" ValidationGroup="addTransaksi" OnClick="saveData" CssClass="input-submit">
+                        <prop:ClientSide.OnPreDispatch>
+                            $('loadingbar').show();			                                
+                        </prop:ClientSide.OnPreDispatch>
+                        <prop:ClientSide.OnLoading>
+                            $('<%=$this->btnSave->ClientId%>').disabled='disabled';									
+                        </prop:ClientSide.OnLoading>
+                        <prop:ClientSide.onComplete>
+                            $('<%=$this->btnSave->ClientId%>').disabled='';																								                                
+                            $('loadingbar').hide();
+                        </prop:ClientSide.OnComplete>
+                    </com:TActiveButton>
+                </td>
+			</tr>
+		</table>		
+	</com:TPanel>
+	<com:TPanel Visible="<%= $this->getEditProcess(false) %>">
+		<com:THiddenField ID="hiddennorek1" />
+		<h3 class="tit">Edit Transaksi</h3>		
+		<table class="list">
+			<tr>
+				<td width="150" class="left">Kode Transaksi</td>
+				<td>					
+					<com:TActiveTextBox ID="txtEditKodeTransaksi" Columns="1" MaxLength="1" Attributes.OnKeyUp="formatangka(this,true)" />
+					<com:TRequiredFieldValidator ControlToValidate="txtEditKodeTransaksi" Display="Dynamic" ErrorMessage="<p class='msg error'>Isi Kode Transaksi</p>" ValidationGroup="editTransaksi" FocusOnError="true" />
+					<com:TActiveCustomValidator ID="editKodeTransaksi" ControlToValidate="txtEditKodeTransaksi" Display="Dynamic" OnServerValidate="checkKodeTransaksi" ValidationGroup="editTransaksi" ErrorMessage="<p class='msg error'>Kode Urusan Yang Anda Inputkan Sudah Ada</p>" FocusOnError="true" />					
+				</td>
+			</tr>
+			<tr>
+				<td class="left">Nama Transaksi</td>
+				<td>
+					<com:TActiveTextBox ID="txtEditNamaTransaksi" Columns="25" />
+                    <com:TRequiredFieldValidator ControlToValidate="txtEditNamaTransaksi" Display="Dynamic" ErrorMessage="Isi Nama Transaksi" ValidationGroup="editTransaksi" />
+				</td>
+			</tr>
+			<tr>
+				<td class="left">&nbsp;</td>
+				<td><com:TActiveButton ID="btnUpdate" Text="Update" ValidationGroup="editTransaksi" OnClick="updateData" CssClass="input-submit">
+                        <prop:ClientSide.OnPreDispatch>
+                            $('loadingbar').show();			                                
+                        </prop:ClientSide.OnPreDispatch>
+                        <prop:ClientSide.OnLoading>
+                            $('<%=$this->btnUpdate->ClientId%>').disabled='disabled';									
+                        </prop:ClientSide.OnLoading>
+                        <prop:ClientSide.onComplete>
+                            $('<%=$this->btnUpdate->ClientId%>').disabled='';																								                                
+                            $('loadingbar').hide();
+                        </prop:ClientSide.OnComplete>
+                    </com:TActiveButton>
+                </td>
+			</tr>
+		</table>		
+	</com:TPanel>
+	<com:TPanel Visible="<%= $this->getDefaultProcess() %>">       
+		<com:TActiveRepeater ID="RepeaterS" DataKeyField="no_rek1" AllowPaging="true" PageSize="10" AllowCustomPaging="true">
+            <prop:HeaderTemplate>			
+                <table cellpadding="0" class="list">	
+                    <thead>
+                    <tr>
+                        <th width="15" class="center">No</th>
+                        <th width="100" class="center">Kode Transaksi</th>
+                        <th class="center">Nama Transaksi</th>                                                							
+                    </tr>								
+                    </thead>
+                    <tbody>
+            </prop:HeaderTemplate>
+            <prop:ItemTemplate>
+                <tr>				
+                    <td class="center"><%#$this->DataItem['no']%></td>
+                    <td class="center"><%#$this->DataItem['no_rek1']%></td>	
+                    <td class="left"><%#$this->DataItem['nama_rek1']%></td>											                                       
+                </tr>
+            </prop:ItemTemplate>				
+            <prop:AlternatingItemTemplate>
+                 <tr>				
+                    <td class="center"><%#$this->DataItem['no']%></td>
+                    <td class="center"><%#$this->DataItem['no_rek1']%></td>	
+                    <td class="left"><%#$this->DataItem['nama_rek1']%></td>											                                       
+                </tr>
+            </prop:AlternatingItemTemplate>
+            <prop:FooterTemplate>               
+                </tbody>
+                </table>
+            </prop:FooterTemplate>	
+            <prop:EmptyTemplate>
+                <p class="msg info">
+                    no record.
+                </p>                
+            </prop:EmptyTemplate>
+        </com:TActiveRepeater>
+        <%include Application.Paging%> 		
+	</com:TPanel>
+</com:TContent>

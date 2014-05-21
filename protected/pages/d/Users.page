@@ -1,0 +1,275 @@
+<%@ Title="Users" %>
+<com:TContent ID="header">Users</com:TContent>
+<com:TContent ID="content">	
+    <com:TPanel Visible="<%= $this->getEditProcess(false) %>" CssClass="grid_12">
+        <com:TActiveHiddenField ID="hiddenuserid" />
+        <com:TActiveHiddenField ID="hiddenusername" />
+        <com:TActiveHiddenField ID="hiddenemail" />        
+        <h3 class="tit">Ubah User</h3>            
+        <table class="list">	                   
+            <tr>
+                <td class="left" width="250"><label>Username</label></td>
+                <td class="left">											
+                    <com:TActiveTextBox ID="txtEditUsername" Columns="20" />			
+                    <com:TRequiredFieldValidator ControlToValidate="txtEditUsername" Display="Dynamic" ErrorMessage="<span class='error'>Isi username</span>" ValidationGroup="edituser" FocusOnError="true">			
+                        <prop:ClientSide.OnValidationError>
+                            $('<%=$this->txtEditUsername->ClientID%>').addClassName('error');
+                        </prop:ClientSide.OnValidationError>
+                        <prop:ClientSide.OnValidationSuccess>
+                            $('<%=$this->txtEditUsername->ClientID%>').removeClassName('error');
+                        </prop:ClientSide.OnValidationSuccess>
+                    </com:TRequiredFieldValidator>
+                    <com:TActiveCustomValidator ID="editUsername" ControlToValidate="txtEditUsername" Display="Dynamic" OnServerValidate="checkUsername" ValidationGroup="edituser" ErrorMessage="<span class='error'>Username Yang Anda Inputkan Sudah Ada</span>" FocusOnError="true">
+                        <prop:ClientSide.OnValidationError>
+                            $('<%=$this->txtEditUsername->ClientID%>').addClassName('error');
+                        </prop:ClientSide.OnValidationError>
+                        <prop:ClientSide.OnValidationSuccess>
+                            $('<%=$this->txtEditUsername->ClientID%>').removeClassName('error');
+                        </prop:ClientSide.OnValidationSuccess>
+                    </com:TActiveCustomValidator>
+                </td>
+            </tr>
+            <tr>
+                <td class="left"><label>Password</label></td>
+                <td class="left"><com:TTextBox ID="txtEditPassword" Columns="20" TextMode="Password" /></td>
+            </tr>
+            <tr>
+                <td class="left"><label>Re-Password</label></td>
+                <td class="left"><com:TTextBox ID="txtEditPassword2" Columns="20" TextMode="Password" />
+                    <com:TCompareValidator ControlToValidate="txtEditPassword" ControlToCompare="txtEditPassword2" Display="Dynamic" ErrorMessage="<span class='error'>Isi Password tidak sama</span>" ValidationGroup="edituser" FocusOnError="true">				
+                        <prop:ClientSide.OnValidationError>
+                            $('<%=$this->txtEditPassword2->ClientID%>').addClassName('error');
+                        </prop:ClientSide.OnValidationError>
+                        <prop:ClientSide.OnValidationSuccess>
+                            $('<%=$this->txtEditPassword2->ClientID%>').removeClassName('error');
+                        </prop:ClientSide.OnValidationSuccess>
+                    </com:TCompareValidator>
+                </td> 
+            </tr>
+            <tr>
+                <td class="left"><label>Alamat Email</label></td>
+                <td class="left"><com:TTextBox ID="txtEditAlamatEmail" Columns="40" />
+                    <com:TRequiredFieldValidator ControlToValidate="txtEditAlamatEmail" Display="Dynamic" ErrorMessage="<span class='error'>Isi Email</span>" ValidationGroup="edituser" FocusOnError="true">				
+                        <prop:ClientSide.OnValidationError>
+                            $('<%=$this->txtEditAlamatEmail->ClientID%>').addClassName('error');
+                        </prop:ClientSide.OnValidationError>
+                        <prop:ClientSide.OnValidationSuccess>
+                            $('<%=$this->txtEditAlamatEmail->ClientID%>').removeClassName('error');
+                        </prop:ClientSide.OnValidationSuccess>
+                    </com:TRequiredFieldValidator>
+                    <com:TEmailAddressValidator ControlToValidate="txtEditAlamatEmail" Display="Dynamic" ErrorMessage="<span class='error'>Isi Alamat Email</span>" ValidationGroup="edituser" FocusOnError="true" CheckMXRecord="false">
+                        <prop:ClientSide.OnValidationError>
+                            $('<%=$this->txtEditAlamatEmail->ClientID%>').addClassName('error');
+                        </prop:ClientSide.OnValidationError>
+                        <prop:ClientSide.OnValidationSuccess>
+                            $('<%=$this->txtEditAlamatEmail->ClientID%>').removeClassName('error');
+                        </prop:ClientSide.OnValidationSuccess>
+                    </com:TEmailAddressValidator>
+                    <com:TActiveCustomValidator ID="editEmail" ControlToValidate="txtEditAlamatEmail" Display="Dynamic" OnServerValidate="checkEmail" ValidationGroup="edituser" ErrorMessage="<span class='error'>Email Yang Anda Inputkan Sudah Ada</span>" FocusOnError="true">
+                        <prop:ClientSide.OnValidationError>
+                            $('<%=$this->txtEditAlamatEmail->ClientID%>').addClassName('error');
+                        </prop:ClientSide.OnValidationError>
+                        <prop:ClientSide.OnValidationSuccess>
+                            $('<%=$this->txtEditAlamatEmail->ClientID%>').removeClassName('error');
+                        </prop:ClientSide.OnValidationSuccess>
+                    </com:TActiveCustomValidator>
+                </td> 
+            </tr>           
+            <tr>
+                <td class="left">&nbsp;</td>
+                <td class="left">
+                    <com:TActiveButton ID="btnEditSave" Text="Save" CssClass="input-submit" ValidationGroup="edituser" OnClick="updateData">
+                        <prop:ClientSide.OnPreDispatch>
+                            $('loadingbar').show();			                                
+                        </prop:ClientSide.OnPreDispatch>
+                        <prop:ClientSide.OnLoading>
+                            $('<%=$this->btnEditSave->ClientId%>').disabled='disabled';									
+                        </prop:ClientSide.OnLoading>
+                        <prop:ClientSide.onComplete>
+                            $('<%=$this->btnEditSave->ClientId%>').disabled='';																								                                
+                            $('loadingbar').hide();
+                        </prop:ClientSide.OnComplete>
+                    </com:TActiveButton>
+                </td>
+            </tr>
+        </table>		            
+    </com:TPanel>
+    <com:TPanel Visible="<%= $this->getAddProcess(false) %>">		        		        
+        <h3 class="tit">Tambah User</h3>	
+        <table class="list">	                   
+            <tr>
+                <td class="left" width="250"><label>Username</label></td>
+                <td class="left">											
+                    <com:TActiveTextBox ID="txtAddUsername" Columns="20" />			
+                    <com:TRequiredFieldValidator ControlToValidate="txtAddUsername" Display="Dynamic" ErrorMessage="<span class='error'>Isi username</span>" ValidationGroup="adduser" FocusOnError="true">			
+                        <prop:ClientSide.OnValidationError>
+                            $('<%=$this->txtAddUsername->ClientID%>').addClassName('error');
+                        </prop:ClientSide.OnValidationError>
+                        <prop:ClientSide.OnValidationSuccess>
+                            $('<%=$this->txtAddUsername->ClientID%>').removeClassName('error');
+                        </prop:ClientSide.OnValidationSuccess>
+                    </com:TRequiredFieldValidator>
+                    <com:TActiveCustomValidator ID="addUsername" ControlToValidate="txtAddUsername" Display="Dynamic" OnServerValidate="checkUsername" ValidationGroup="adduser" ErrorMessage="<span class='error'>Username Yang Anda Inputkan Sudah Ada</span>" FocusOnError="true">
+                        <prop:ClientSide.OnValidationError>
+                            $('<%=$this->txtAddUsername->ClientID%>').addClassName('error');
+                        </prop:ClientSide.OnValidationError>
+                        <prop:ClientSide.OnValidationSuccess>
+                            $('<%=$this->txtAddUsername->ClientID%>').removeClassName('error');
+                        </prop:ClientSide.OnValidationSuccess>
+                    </com:TActiveCustomValidator>
+                </td>
+            </tr>            
+            <tr>
+                <td class="left"><label>Password</label></td>
+                <td class="left"><com:TTextBox ID="txtAddPassword" Columns="20" TextMode="Password" />
+                    <com:TRequiredFieldValidator ControlToValidate="txtAddPassword" Display="Dynamic" ErrorMessage="<span class='error'>Isi Password</span>" ValidationGroup="adduser" FocusOnError="true">				
+                        <prop:ClientSide.OnValidationError>
+                            $('<%=$this->txtAddPassword->ClientID%>').addClassName('error');
+                        </prop:ClientSide.OnValidationError>
+                        <prop:ClientSide.OnValidationSuccess>
+                            $('<%=$this->txtAddPassword->ClientID%>').removeClassName('error');
+                        </prop:ClientSide.OnValidationSuccess>
+                    </com:TRequiredFieldValidator>
+                </td>
+            </tr>
+            <tr>
+                <td class="left"><label>Re-Password</label></td>
+                <td class="left"><com:TTextBox ID="txtAddPassword2" Columns="20" TextMode="Password" />
+                    <com:TCompareValidator ControlToValidate="txtAddPassword" ControlToCompare="txtAddPassword2" Display="Dynamic" ErrorMessage="<span class='error'>Isi Password tidak sama</span>" ValidationGroup="adduser" FocusOnError="true">				
+                        <prop:ClientSide.OnValidationError>
+                            $('<%=$this->txtAddPassword2->ClientID%>').addClassName('error');
+                        </prop:ClientSide.OnValidationError>
+                        <prop:ClientSide.OnValidationSuccess>
+                            $('<%=$this->txtAddPassword2->ClientID%>').removeClassName('error');
+                        </prop:ClientSide.OnValidationSuccess>
+                    </com:TCompareValidator>
+                </td> 
+            </tr>
+            <tr>
+                <td class="left"><label>Alamat Email</label></td>
+                <td class="left"><com:TTextBox ID="txtAddAlamatEmail" Columns="40" />
+                    <com:TRequiredFieldValidator ControlToValidate="txtAddAlamatEmail" Display="Dynamic" ErrorMessage="<span class='error'>Isi Email</span>" ValidationGroup="adduser" FocusOnError="true">				
+                        <prop:ClientSide.OnValidationError>
+                            $('<%=$this->txtAddAlamatEmail->ClientID%>').addClassName('error');
+                        </prop:ClientSide.OnValidationError>
+                        <prop:ClientSide.OnValidationSuccess>
+                            $('<%=$this->txtAddAlamatEmail->ClientID%>').removeClassName('error');
+                        </prop:ClientSide.OnValidationSuccess>
+                    </com:TRequiredFieldValidator>
+                    <com:TEmailAddressValidator ControlToValidate="txtAddAlamatEmail" Display="Dynamic" ErrorMessage="<span class='error'>Isi Alamat Email</span>" ValidationGroup="adduser" FocusOnError="true" CheckMXRecord="false">
+                        <prop:ClientSide.OnValidationError>
+                            $('<%=$this->txtAddAlamatEmail->ClientID%>').addClassName('error');
+                        </prop:ClientSide.OnValidationError>
+                        <prop:ClientSide.OnValidationSuccess>
+                            $('<%=$this->txtAddAlamatEmail->ClientID%>').removeClassName('error');
+                        </prop:ClientSide.OnValidationSuccess>
+                    </com:TEmailAddressValidator>
+                    <com:TActiveCustomValidator ID="addEmail" ControlToValidate="txtAddAlamatEmail" Display="Dynamic" OnServerValidate="checkEmail" ValidationGroup="adduser" ErrorMessage="<span class='error'>Email Yang Anda Inputkan Sudah Ada</span>" FocusOnError="true">
+                        <prop:ClientSide.OnValidationError>
+                            $('<%=$this->txtAddAlamatEmail->ClientID%>').addClassName('error');
+                        </prop:ClientSide.OnValidationError>
+                        <prop:ClientSide.OnValidationSuccess>
+                            $('<%=$this->txtAddAlamatEmail->ClientID%>').removeClassName('error');
+                        </prop:ClientSide.OnValidationSuccess>
+                    </com:TActiveCustomValidator>
+                </td> 
+            </tr>                        
+            <tr>
+                <td class="left">&nbsp;</td>
+                <td class="left">
+                    <com:TActiveButton ID="btnAddSave" Text="Save" CssClass="input-submit" ValidationGroup="adduser" OnClick="saveData">
+                        <prop:ClientSide.OnPreDispatch>
+                            $('loadingbar').show();			                                
+                        </prop:ClientSide.OnPreDispatch>
+                        <prop:ClientSide.OnLoading>
+                            $('<%=$this->btnAddSave->ClientId%>').disabled='disabled';									
+                        </prop:ClientSide.OnLoading>
+                        <prop:ClientSide.onComplete>
+                            $('<%=$this->btnAddSave->ClientId%>').disabled='';																								                                
+                            $('loadingbar').hide();
+                        </prop:ClientSide.OnComplete>
+                    </com:TActiveButton>
+                </td>
+            </tr>
+        </table>		                    
+	</com:TPanel>
+	<com:TPanel Visible="<%= $this->getDefaultProcess() %>">
+        <div class="controlbox">
+            <p id="btn-create" class="box"><com:TLinkButton Text="<span>Tambah User</span>" OnClick="setIdProcess" ID="add" CausesValidation="false" /></p>
+        </div>			
+        <h3 class="tit">Filters & Search</h3>	        
+        <table class="list">		
+            <thead>
+                <tr>
+                    <td class="left" colspan="2">Filters & Search</td>
+                </tr>
+            </thead>
+            <tbody>                                                                              
+                <tr>
+                    <td class="left">Username</td>
+                    <td class="left">
+                        <com:TActiveTextBox ID="txtKriteria" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="left"></td>
+                    <td class="left">
+                        <com:TActiveButton ID="btnSearch" OnClick="filterRecord" Text="Search" ValidationGroup="filterForm" CssClass="input-submit">
+                            <prop:ClientSide.OnPreDispatch>
+                                $('loadingbar').show();			                                
+                            </prop:ClientSide.OnPreDispatch>
+                            <prop:ClientSide.OnLoading>
+                                $('<%=$this->btnSearch->ClientId%>').disabled='disabled';									
+                            </prop:ClientSide.OnLoading>
+                            <prop:ClientSide.onComplete>
+                                $('<%=$this->btnSearch->ClientId%>').disabled='';																								                                
+                                $('loadingbar').hide();
+                            </prop:ClientSide.OnComplete>
+                        </com:TActiveButton>
+                        <com:TRequiredFieldValidator ControlToValidate="txtKriteria" ErrorMessage="Nama kriteria harap di isi" Display="Dynamic" ValidationGroup="filterForm" FocusOnError="true" />
+                    </td>
+                </tr>            
+            </tbody>
+        </table>                
+        <com:TActiveRepeater ID="RepeaterS" DataKeyField="userid" AllowPaging="true" PageSize="10" AllowCustomPaging="true">
+            <prop:HeaderTemplate>			
+                <table class="list">	
+                    <thead>
+                    <tr>
+                        <th width="15" class="center">No</th>
+                        <th>Username</th>                                                
+                        <th>Email</th>                        
+                        <th width="160">Actions</th>							
+                    </tr>								
+                    </thead>
+                    <tbody>
+            </prop:HeaderTemplate>
+            <prop:ItemTemplate>
+                <tr>				
+                    <td class="center"><%#$this->DataItem['no']%></td>
+                    <td><%#$this->DataItem['username']%></td>                  											                   
+                    <td><%#$this->DataItem['email']%></td>
+                    <td width="90" class="center"><com:TButton CssClass="input-submit" Text="Edit" OnClick="Page.editRecord" /> <com:TActiveButton ID="btnDelete" ClientSide.PostState="false" Text="Hapus" CssClass="input-submit" OnClick="Page.deleteRecord" /></td>
+                </tr>
+            </prop:ItemTemplate>				
+            <prop:AlternatingItemTemplate>
+              <tr>				
+                    <td class="center"><%#$this->DataItem['no']%></td>
+                    <td><%#$this->DataItem['username']%></td>                  											                   
+                    <td><%#$this->DataItem['email']%></td>
+                    <td width="90" class="center"><com:TButton CssClass="input-submit" Text="Edit" OnClick="Page.editRecord" /> <com:TActiveButton ID="btnDelete" ClientSide.PostState="false" Text="Hapus" CssClass="input-submit" OnClick="Page.deleteRecord" /></td>
+                </tr>
+            </prop:AlternatingItemTemplate>
+            <prop:FooterTemplate>               
+                </tbody>
+                </table>
+            </prop:FooterTemplate>	
+            <prop:EmptyTemplate>
+                <p class="msg info">
+                    no record.
+                </p>              
+            </prop:EmptyTemplate>
+        </com:TActiveRepeater>
+        <%include Application.Paging%>             
+	</com:TPanel>	
+</com:TContent>

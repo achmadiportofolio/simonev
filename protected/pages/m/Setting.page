@@ -1,0 +1,64 @@
+<%@ Title="Setting" %>
+<com:TContent ID="header">Setting Aplikasi</com:TContent>
+<com:TContent ID="content">	    
+	<com:TPanel Visible="<%= $this->getDefaultProcess() %>"> 
+        <h3 class="tit">Setting - Waktu Input</h3>    
+        <table class="list">                        
+            <tbody>
+                <tr>
+                    <td class="left" width="150">Tanggal Mulai</td>
+                    <td class="left">
+                        <com:TDropDownList ID="cmbTanggalMulai" />                        
+                    </td>
+                </tr>
+                <tr>
+                    <td class="left">Tanggal Selesai</td>
+                    <td class="left">
+                        <com:TDropDownList ID="cmbTanggalSelesai" />                        
+                        <com:TCompareValidator ValidationGroup="validatorWaktuInput" ControlToValidate="cmbTanggalSelesai" ControlToCompare="cmbTanggalMulai" Operator="GreaterThanEqual" Text="Tanggal selesai harus lebih besar dari tanggal mulai" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="left" width="150">&nbsp;</td>
+                    <td class="left">
+                        <com:TActiveButton ID="btnSaveWaktuInput" Text="Simpan" CssClass="input-submit" OnClick="saveWaktuInput" ValidationGroup="validatorWaktuInput">
+                            <prop:ClientSide.OnPreDispatch>
+                                $('loadingbar').show();			                                
+                            </prop:ClientSide.OnPreDispatch>
+                            <prop:ClientSide.OnLoading>
+                                $('<%=$this->btnSaveWaktuInput->ClientId%>').disabled='disabled';									
+                            </prop:ClientSide.OnLoading>
+                            <prop:ClientSide.onComplete>
+                                $('<%=$this->btnSaveWaktuInput->ClientId%>').disabled='';																								                                
+                                $('loadingbar').hide();
+                            </prop:ClientSide.OnComplete>
+                        </com:TActiveButton>                        
+                    </td>
+                </tr>
+            </tbody>
+        </table>           
+        <h3 class="tit">Setting - Cache</h3>    
+        <table class="list">                        
+            <tbody>
+                <tr>
+                    <td class="left" width="150">Clear Cache</td>
+                    <td class="left">
+                        <com:TActiveButton ID="btnClearCache" Text="Clear" CssClass="input-submit" OnClick="clearCache">
+                            <prop:ClientSide.OnPreDispatch>
+                                $('loadingbar').show();			                                
+                            </prop:ClientSide.OnPreDispatch>
+                            <prop:ClientSide.OnLoading>
+                                $('<%=$this->btnClearCache->ClientId%>').disabled='disabled';									
+                            </prop:ClientSide.OnLoading>
+                            <prop:ClientSide.onComplete>
+                                $('<%=$this->btnClearCache->ClientId%>').disabled='';																								                                
+                                $('loadingbar').hide();
+                            </prop:ClientSide.OnComplete>
+                        </com:TActiveButton>
+                        <com:TActiveLabel ID="message" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>           
+	</com:TPanel>	
+</com:TContent>

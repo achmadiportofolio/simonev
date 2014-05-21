@@ -1,0 +1,286 @@
+<%@ Title="Data Master::Rekening::Rincian" %>
+<com:TContent ID="leftcontent">
+    <%include Application.pages.m.dmaster.LeftMenu%>
+</com:TContent>
+<com:TContent ID="header">Rincian</com:TContent>
+<com:TContent ID="content">
+	<com:TPanel Visible="<%= $this->getEditProcess(false) %>">
+		<h3 class="tit">Edit Rincian</h3>			
+		<com:THiddenField ID="hiddennorek5" />		
+        <table class="list">
+			<tr>
+				<td width="150" class="left">Kode Rincian</td>
+				<td class="left">				
+                    <com:TActiveLabel ID="lblEditKodeObjek" ForeColor="red" />				
+                    <com:TActiveTextBox ID="txtEditKodeRincian" Columns="3" MaxLength="3" Attributes.OnKeyUp="formatangka(this,true)" />				
+                    <com:TRequiredFieldValidator ControlToValidate="txtEditKodeRincian" Display="Dynamic" ErrorMessage="<p class='msg error'>Isi Kode Rincian</p>" ValidationGroup="EditRincian" FocusOnError="true" />				
+                    <com:TActiveCustomValidator ID="checkEditKodeRincian" ControlToValidate="txtEditKodeRincian" Display="Dynamic" OnServerValidate="checkKodeRincian" ValidationGroup="EditRincian" ErrorMessage="<p class='msg error'>Kode Transaksi Yang Anda Inputkan Sudah Ada</p>" FocusOnError="true" />					
+                </td>
+			<tr>
+				<td class="left">Nama Rincian</td>
+				<td class="left">					
+                    <com:TActiveTextBox ID="txtEditNamaRincian" Columns="30" />		
+                    <com:TRequiredFieldValidator ControlToValidate="txtEditNamaRincian" Display="Dynamic" ErrorMessage="<p class='msg error'>Isi Nama Rincian</p>" ValidationGroup="EditRincian" FocusOnError="true" />				
+				</td>		
+			</tr>
+			<tr>
+				<td class="left">&nbsp;</td>
+				<td class="left">
+                    <com:TActiveButton ID="btnUpdate" Text="Update" ValidationGroup="EditRincian" OnClick="updateData" CssClass="input-submit">
+                        <prop:ClientSide.OnPreDispatch>                                    
+                            $('loadingbar').show();
+                        </prop:ClientSide.OnPreDispatch>                        
+                        <prop:ClientSide.onLoading>                                    
+                            $('<%=$this->btnUpdate->clientId%>').disabled='disabled';
+                        </prop:ClientSide.onLoading>					
+                        <prop:ClientSide.onComplete>						
+                            $('<%=$this->btnUpdate->clientId%>').disabled='';
+                            $('loadingbar').hide();
+                        </prop:ClientSide.OnComplete>
+                    </com:TActiveButton>            
+                </td>
+			</tr>
+		</table>		
+	</com:TPanel>
+	<com:TPanel Visible="<%= $this->getAddProcess(false) %>">
+		<h3 class="tit">Tambah Rincian</h3>		
+		<table class="list">
+            <tr>
+				<td width="150" class="left">Nama Jenis</td>
+				<td class="left">
+                    <com:TActiveDropDownList ID="cmbAddJenis" AutoPostBack="true" OnSelectedIndexChanged="cmbJenisChanged">		                    
+                        <prop:ClientSide.OnPreDispatch>                                    
+                            $('loadingaddjenis').show();
+                        </prop:ClientSide.OnPreDispatch>                        
+                        <prop:ClientSide.onLoading>                                    
+                            $('<%=$this->cmbAddJenis->clientId%>').disabled='disabled';
+                        </prop:ClientSide.onLoading>					
+                        <prop:ClientSide.onComplete>						
+                            $('<%=$this->cmbAddJenis->clientId%>').disabled='';
+                            $('loadingaddjenis').hide();
+                        </prop:ClientSide.OnComplete>
+                    </com:TActiveDropDownList>
+                    <img id="loadingaddjenis" src="<%=$this->Page->Theme->baseUrl%>/design/ajax-loader-1.gif" style="display:none;" />
+                </td>
+            </td>
+			<tr>
+				<td class="left">Nama Objek</td>
+				<td class="left">
+                    <com:TActiveDropDownList ID="cmbAddObjek" AutoPostBack="true" OnSelectedIndexChanged="cmbObjekChanged" Enabled="false">		                    
+                        <prop:ClientSide.OnPreDispatch>                                    
+                            $('loadingaddobjek').show();
+                        </prop:ClientSide.OnPreDispatch>                        
+                        <prop:ClientSide.onLoading>                                    
+                            $('<%=$this->cmbAddObjek->clientId%>').disabled='disabled';
+                        </prop:ClientSide.onLoading>					
+                        <prop:ClientSide.onComplete>						
+                            $('<%=$this->cmbAddObjek->clientId%>').disabled='';
+                            $('loadingaddobjek').hide();
+                        </prop:ClientSide.OnComplete>
+                    </com:TActiveDropDownList>		
+                    <com:TRequiredFieldValidator ControlToValidate="cmbAddObjek" InitialValue="none" Display="Dynamic" ErrorMessage="<p class='msg error'>Pilih Nama Objek</p>" ValidationGroup="addRincian" FocusOnError="true" />				
+                    <img id="loadingaddobjek" src="<%=$this->Page->Theme->baseUrl%>/design/ajax-loader-1.gif" style="display:none;" />
+				</td>
+			</tr>
+			<tr>
+				<td class="left">Kode Rincian</td>
+				<td class="left">				
+                    <com:TActiveLabel ID="lblAddKodeObjek" ForeColor="red" />				
+                    <com:TActiveTextBox ID="txtAddKodeRincian" Columns="3" MaxLength="3" Attributes.OnKeyUp="formatangka(this,true)" Enabled="false" />				
+                    <com:TRequiredFieldValidator ControlToValidate="txtAddKodeRincian" Display="Dynamic" ErrorMessage="<p class='msg error'>Isi Kode Rincian</p>" ValidationGroup="addRincian" FocusOnError="true" />				
+                    <com:TActiveCustomValidator ID="checkAddKodeRincian" ControlToValidate="txtAddKodeRincian" Display="Dynamic" OnServerValidate="checkKodeRincian" ValidationGroup="addRincian" ErrorMessage="<p class='msg error'>Kode Transaksi Yang Anda Inputkan Sudah Ada</p>" FocusOnError="true" />					
+                </td>
+			<tr>
+				<td class="left">Nama Rincian</td>
+				<td class="left">					
+                    <com:TActiveTextBox ID="txtAddNamaRincian" Columns="30" Enabled="false" />		
+                    <com:TRequiredFieldValidator ControlToValidate="txtAddNamaRincian" Display="Dynamic" ErrorMessage="<p class='msg error'>Isi Nama Rincian</p>" ValidationGroup="addRincian" FocusOnError="true" />				
+				</td>		
+			</tr>
+			<tr>
+				<td class="left">&nbsp;</td>
+				<td class="left"><com:TActiveButton ID="btnSave" Text="Save" ValidationGroup="addRincian" OnClick="saveData" CssClass="input-submit" Enabled="false">
+                        <prop:ClientSide.OnPreDispatch>
+                            $('loadingbar').show();			                                
+                        </prop:ClientSide.OnPreDispatch>
+                        <prop:ClientSide.OnLoading>
+                            $('<%=$this->btnSave->ClientId%>').disabled='disabled';									
+                        </prop:ClientSide.OnLoading>
+                        <prop:ClientSide.onComplete>
+                            $('<%=$this->btnSave->ClientId%>').disabled='';																								                                
+                            $('loadingbar').hide();
+                        </prop:ClientSide.OnComplete>
+                    </com:TActiveButton>
+                </td>
+			</tr>
+		</table>		
+	</com:TPanel>
+	<com:TPanel Visible="<%= $this->getDefaultProcess() %>">
+		<div class="controlbox">
+            <p id="btn-create" class="box">
+                <com:TLinkButton Text="<span>Tambah Rincian</span>" OnClick="addProcess" ID="add" CausesValidation="false" />                
+            </p>
+            <p style="text-align:right;">
+                <com:TActiveButton Text="Print Rincian" OnClick="Page.showPrintOutModal" ID="btnPrint" ClientSide.PostState="false" CssClass="input-submit">
+                    <prop:ClientSide.OnPreDispatch>
+                        $('loadingbar').show();			                                
+                    </prop:ClientSide.OnPreDispatch>
+                    <prop:ClientSide.OnLoading>
+                        $('<%=$this->btnPrint->ClientId%>').disabled='disabled';									
+                    </prop:ClientSide.OnLoading>
+                    <prop:ClientSide.onComplete>
+                        $('<%=$this->btnPrint->ClientId%>').disabled='';																								                                
+                        $('loadingbar').hide();
+                    </prop:ClientSide.OnComplete>
+                </com:TActiveButton>
+            </p>
+        </div>                
+        <h3 class="tit">Filters & Search</h3>
+        <table class="list">
+            <thead>
+                <tr>
+                    <td class="left" colspan="2">Filters</td>
+                </tr>
+            </thead>
+            <tbody> 
+                <tr>
+                    <td class="left">Kelompok :</td>
+                </tr>
+                <tr>
+                    <td class="left"><com:TActiveDropDownList ID="cmbKelompok" AutoPostBack="true" OnSelectedIndexChanged="changeRekening">
+                            <prop:ClientSide.OnPreDispatch>
+                                $('loadingbar').show();			                                
+                            </prop:ClientSide.OnPreDispatch>
+                            <prop:ClientSide.OnLoading>
+                                $('<%=$this->cmbKelompok->ClientId%>').disabled='disabled';									
+                            </prop:ClientSide.OnLoading>
+                            <prop:ClientSide.onComplete>
+                                $('<%=$this->cmbKelompok->ClientId%>').disabled='';																								                                
+                                $('loadingbar').hide();
+                            </prop:ClientSide.OnComplete>
+                        </com:TActiveDropDownList>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="left">Jenis :</td>
+                </tr>
+                <tr>
+                    <td class="left" ><com:TActiveDropDownList ID="cmbJenis" AutoPostBack="true" OnSelectedIndexChanged="changeRekening" Enabled="false">
+                            <prop:ClientSide.OnPreDispatch>
+                                $('loadingbar').show();			                                
+                            </prop:ClientSide.OnPreDispatch>
+                            <prop:ClientSide.OnLoading>
+                                $('<%=$this->cmbJenis->ClientId%>').disabled='disabled';									
+                            </prop:ClientSide.OnLoading>
+                            <prop:ClientSide.onComplete>
+                                $('<%=$this->cmbJenis->ClientId%>').disabled='';																								                                
+                                $('loadingbar').hide();
+                            </prop:ClientSide.OnComplete>
+                        </com:TActiveDropDownList>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="left">Objek :</td>
+                </tr>
+                <tr>
+                    <td class="left"><com:TActiveDropDownList ID="cmbObjek" AutoPostBack="true" OnSelectedIndexChanged="changeRekening" Enabled="false">
+                            <prop:ClientSide.OnPreDispatch>
+                                $('loadingbar').show();			                                
+                            </prop:ClientSide.OnPreDispatch>
+                            <prop:ClientSide.OnLoading>
+                                $('<%=$this->cmbObjek->ClientId%>').disabled='disabled';									
+                            </prop:ClientSide.OnLoading>
+                            <prop:ClientSide.onComplete>
+                                $('<%=$this->cmbObjek->ClientId%>').disabled='';																								                                
+                                $('loadingbar').hide();
+                            </prop:ClientSide.OnComplete>
+                        </com:TActiveDropDownList>
+                    </td>
+                </tr>                
+            </tbody>
+        </table>
+        <table class="list">
+            <thead>
+                <tr>
+                    <td class="left" colspan="2">Search</td>
+                </tr>
+            </thead>
+            <tbody>                          
+                <tr>
+                    <td width="250" class="left">Berdasarkan</td>
+                    <td class="left">
+                        <com:TActiveDropDownList ID="cmbBerdasarkan" AutoPostBack="false">
+                            <com:TListItem Value="kode" Text="Kode Rekening" />
+                            <com:TListItem Value="nama" Text="Nama Rekening" />
+                        </com:TActiveDropDownList>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="left">Kriteria</td>
+                    <td class="left">
+                        <com:TActiveTextBox ID="txtKriteria" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="left"></td>
+                    <td class="left">
+                        <com:TActiveButton ID="btnSearch" OnClick="filterRecord" Text="Search" ValidationGroup="filterForm" CssClass="input-submit">
+                            <prop:ClientSide.OnPreDispatch>
+                                $('loadingbar').show();			                                
+                            </prop:ClientSide.OnPreDispatch>
+                            <prop:ClientSide.OnLoading>
+                                $('<%=$this->btnSearch->ClientId%>').disabled='disabled';									
+                            </prop:ClientSide.OnLoading>
+                            <prop:ClientSide.onComplete>
+                                $('<%=$this->btnSearch->ClientId%>').disabled='';																								                                
+                                $('loadingbar').hide();
+                            </prop:ClientSide.OnComplete>
+                        </com:TActiveButton>
+                        <com:TRequiredFieldValidator ControlToValidate="txtKriteria" ErrorMessage="Nama kriteria harap di isi" Display="Dynamic" ValidationGroup="filterForm" FocusOnError="true" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>		
+        <com:TActiveRepeater ID="RepeaterS" DataKeyField="no_rek5" AllowPaging="true" PageSize="10" AllowCustomPaging="true">
+            <prop:HeaderTemplate>			
+                <table cellpadding="0" class="list">	
+                    <thead>
+                    <tr>
+                        <th width="15" class="center">No</th>
+                        <th width="150" class="center">Kode Rincian</th>
+                        <th class="center">Nama Rincian</th>                        
+                        <th width="160" class="center">Actions</th>							
+                    </tr>								
+                    </thead>
+                    <tbody>
+            </prop:HeaderTemplate>
+            <prop:ItemTemplate>
+                <tr>				
+                    <td class="center"><%#$this->DataItem['no']%></td>
+                    <td class="center"><%#$this->DataItem['no_rek5']%></td>	
+                    <td class="left"><%#$this->DataItem['nama_rek5']%></td>											                   
+                    <td class="center"><com:TButton CssClass="input-submit"  Text="Edit" OnClick="Page.editRecord" /> <com:TActiveButton CssClass="input-submit" Text="Delete" OnClick="Page.deleteRecord" /></td>
+                </tr>
+            </prop:ItemTemplate>				
+            <prop:AlternatingItemTemplate>
+              <tr>				
+                    <td class="center"><%#$this->DataItem['no']%></td>
+                    <td class="center"><%#$this->DataItem['no_rek5']%></td>	
+                    <td class="left"><%#$this->DataItem['nama_rek5']%></td>											                   
+                    <td class="center"><com:TButton CssClass="input-submit"  Text="Edit" OnClick="Page.editRecord" /> <com:TActiveButton CssClass="input-submit" Text="Delete" OnClick="Page.deleteRecord" /></td>
+                </tr>
+            </prop:AlternatingItemTemplate>
+            <prop:FooterTemplate>               
+                </tbody>
+                </table>
+            </prop:FooterTemplate>	
+            <prop:EmptyTemplate>
+                <p class="msg info">
+                    no record.
+                </p>                
+            </prop:EmptyTemplate>
+        </com:TActiveRepeater>
+        <%include Application.Paging%>	
+        <%include Application.pages.m.report.ToolbarControls%>
+	</com:TPanel>
+</com:TContent>

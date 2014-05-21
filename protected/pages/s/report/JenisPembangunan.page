@@ -1,0 +1,76 @@
+<%@ Title="Report::Jenis Pembangunan" %>
+<com:TContent ID="leftcontent">
+    <%include Application.pages.s.report.LeftMenu%>
+</com:TContent>
+<com:TContent ID="header">Jenis Pembangunan <com:TLiteral ID="labelJP" /></com:TContent>
+<com:TContent ID="contenttoolbar">
+    <%include Application.layouts.Toolbars%>
+</com:TContent>
+<com:TContent ID="content">	
+    <com:TClientScript>
+        createCookie('style', '1col', 365);
+    </com:TClientScript>
+	<com:TPanel Visible="<%= $this->getViewProcess(false) %>">
+        <%include Application.pages.m.report.ToolbarControls%>
+		<h3 class="tit">Tahun Anggaran <com:TActiveLabel Text="<%=$this->session['ta']%>" /></h3>						
+         <div class="controlbox">
+            <com:TActiveButton Text="Close" OnClick="closeView" ClientSide.PostState="False" CssClass="input-submit"/>
+            <com:TActiveButton ID="btnPrint" Text="Print"  OnClick="Page.showPrintOutModal" ClientSide.PostState="False" CssClass="input-submit">
+                <prop:ClientSide.OnPreDispatch>
+                    $('loadingbar').show();			                                
+                </prop:ClientSide.OnPreDispatch>
+                <prop:ClientSide.OnLoading>
+                    $('<%=$this->btnPrint->ClientId%>').disabled='disabled';									
+                </prop:ClientSide.OnLoading>
+                <prop:ClientSide.onComplete>
+                    $('<%=$this->btnPrint->ClientId%>').disabled='';																								                                
+                    $('loadingbar').hide();
+                </prop:ClientSide.OnComplete>
+            </com:TActiveButton>
+        </div>
+        <br />
+        <com:TActiveLabel ID="contentReport" />
+	</com:TPanel>		
+	<com:TPanel Visible="<%= $this->getDefaultProcess() %>">		
+        <com:TActiveRepeater ID="RepeaterS" DataKeyField="idjenis_pembangunan">
+            <prop:HeaderTemplate>			
+                <table cellpadding="0" class="list">	
+                    <thead>
+                    <tr>
+                        <th width="15" class="left">No</th>                        
+                        <th class="left">Nama Jenis</th>                                                
+                        <th class="left">Jumlah Uraian</th>
+                        <th width="160" class="left">Actions</th>							
+                    </tr>								
+                    </thead>
+                    <tbody>
+            </prop:HeaderTemplate>
+            <prop:ItemTemplate>
+                <tr>				
+                    <td class="left"><%#$this->DataItem['no']%></td>                    
+                    <td class="left"><%#$this->DataItem['nama_jenis']%></td>											                                       
+                    <td class="left"><%#$this->DataItem['jumlah_uraian']%></td>											                                       
+                    <td class="center" width="90"><com:TActiveButton CssClass="input-submit"  Text="Details" OnClick="Page.viewRecord" ClientSide.PostState="false" Enabled="<%#$this->DataItem['jumlah_uraian']>0?true:false%>" /></td>
+                </tr>
+            </prop:ItemTemplate>				
+            <prop:AlternatingItemTemplate>
+               <tr>				
+                    <td class="left"><%#$this->DataItem['no']%></td>                    
+                    <td class="left"><%#$this->DataItem['nama_jenis']%></td>			
+                    <td class="left"><%#$this->DataItem['jumlah_uraian']%></td>											                                       
+                    <td class="center" width="90"><com:TActiveButton CssClass="input-submit"  Text="Details" OnClick="Page.viewRecord" ClientSide.PostState="false" Enabled="<%#$this->DataItem['jumlah_uraian']>0?true:false%>" /></td>
+                </tr>
+            </prop:AlternatingItemTemplate>
+            <prop:FooterTemplate>               
+                </tbody>
+                </table>
+            </prop:FooterTemplate>	
+            <prop:EmptyTemplate>
+                <p class="msg info">
+                    no record.
+                </p>                
+            </prop:EmptyTemplate>
+        </com:TActiveRepeater>
+        <strong>Catatan : </strong> Jumlah uraian berdasarkan yang sudah dilelang.
+	</com:TPanel>
+</com:TContent>

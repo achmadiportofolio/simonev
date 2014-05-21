@@ -1,0 +1,209 @@
+<%@ Title="Reports::Form A" %>
+<com:TContent ID="leftcontent">
+    <%include Application.pages.t.report.LeftMenu%>
+</com:TContent>
+<com:TContent ID="header">
+    Form A Realisasi (Tahun Anggaran <com:TActiveLabel Text="<%=$this->session['ta']%>" />) Posisi Pada Bulan
+    <com:TActiveLabel Text="<%=$this->page->TGL->tanggal('F',date('Y-').$this->session['bulanrealisasi'].date('-d'))%>" />
+</com:TContent>
+<com:TContent ID="contenttoolbar">
+    <%include Application.layouts.Toolbars%>
+</com:TContent>
+<com:TContent ID="content">
+    <com:TClientScript>
+        createCookie('style', '1col', 365);
+    </com:TClientScript>
+    <com:TPanel Visible="<%= $this->getViewProcess() %>">
+        <%include Application.pages.t.report.ToolbarControls%>
+        <div class="controlbox">
+            <com:TActiveButton Text="Close" OnClick="closeView" ClientSide.PostState="False" CssClass="input-submit"/>
+            <com:TActiveButton ID="btnPrint" Text="Print"  OnClick="Page.showPrintOutModal" ClientSide.PostState="False" CssClass="input-submit">
+                <prop:ClientSide.OnPreDispatch>
+                    $('loadingbar').show();			                                
+                </prop:ClientSide.OnPreDispatch>
+                <prop:ClientSide.OnLoading>
+                    $('<%=$this->btnPrint->ClientId%>').disabled='disabled';									
+                </prop:ClientSide.OnLoading>
+                <prop:ClientSide.onComplete>
+                    $('<%=$this->btnPrint->ClientId%>').disabled='';																								                                
+                    $('loadingbar').hide();
+                </prop:ClientSide.OnComplete>
+            </com:TActiveButton>            
+        </div>
+        <h3 class="tit">Data Umum</h3>        
+        <table class="list">
+            <tr>
+                <td class="left" width="200">Program</td>
+                <td><%=$this->session['currentPageFormA']['dataKegiatan']['nama_program']%></td>
+            </tr>
+            <tr>
+                <td class="left">Kegiatan</td>
+                <td><%=$this->session['currentPageFormA']['dataKegiatan']['nama_proyek']%></td>
+            </tr>		
+            <tr>
+                <td class="left"><strong>Tolak Ukur</strong> => Keluaran</td>
+                <td><%=$this->session['currentPageFormA']['dataKegiatan']['keluaran']%></td>
+            </tr>
+            <tr>
+                <td class="left"><strong>Tolak Ukur</strong> => Hasil</td>
+                <td><%=$this->session['currentPageFormA']['dataKegiatan']['hasil']%></td>
+            </tr>
+            <tr>
+                <td class="left">Sifat Kegiatan</td>
+                <td><%=$this->session['currentPageFormA']['dataKegiatan']['sifat_kegiatan']%></td>
+            </tr>		
+            <tr>
+                <td class="left">Jumlah Biaya</td>
+                <td><%=$this->finance->toRupiah($this->session['currentPageFormA']['dataKegiatan']['nilai_pagu'])%></td>
+            </tr>		
+            <tr>
+                <td class="left">Waktu Pelaksanaan</td>
+                <td><%=$this->session['currentPageFormA']['dataKegiatan']['waktu_pelaksanaan']%></td>
+            </tr>
+        </table>       
+        <h3 class="tit">Realisasi Fisik dan Keuangan</h3>                
+        <com:TLiteral ID="contentReport" Text="<%=$this->printContent()%>"/> 
+        <h3 class="tit">Graphic</h3>                   
+        <p style="text-align:center">
+            <img src="<%=$this->Service->constructUrl ('t.report.formAChart')%>" />
+        </p>
+    </com:TPanel>
+    <com:TPanel Visible="<%= $this->getDefaultProcess() %>">        
+        <h3 class="tit">Filters & Search</h3>
+        <table class="list">		
+            <thead>
+                <tr>
+                    <td class="left">Filters</td>
+                </tr>
+            </thead>
+            <tbody>                          
+                <tr>
+                    <td class="left"><strong>Program :</strong></td>
+                </tr>
+                <tr>
+                    <td class="left">
+                        <com:TActiveDropDownList ID="cmbProgram" OnSelectedIndexChanged="changeProgramFilter">
+                            <prop:ClientSide.OnPreDispatch>
+                                $('loadingbar').show();			                                
+                            </prop:ClientSide.OnPreDispatch>                            
+                            <prop:ClientSide.onComplete>                                
+                                $('loadingbar').hide();
+                            </prop:ClientSide.OnComplete>
+                        </com:TActiveDropDownList>
+                    </td>
+                </tr>                
+                <tr>
+                    <td class="left"><strong>Staff :</strong></td>
+                </tr>
+                <tr>
+                    <td class="left">
+                        <com:TActiveDropDownList ID="cmbStaff" OnSelectedIndexChanged="changeStaffFilter">
+                            <prop:ClientSide.OnPreDispatch>
+                                $('loadingbar').show();			                                
+                            </prop:ClientSide.OnPreDispatch>                            
+                            <prop:ClientSide.onComplete>                                
+                                $('loadingbar').hide();
+                            </prop:ClientSide.OnComplete>
+                        </com:TActiveDropDownList>
+                    </td>
+                </tr>                
+            </tbody>
+        </table>
+        <table class="list">		
+            <thead>
+                <tr>
+                    <td class="left" colspan="2">Search</td>
+                </tr>
+            </thead>
+            <tbody>                                                              
+                <tr>
+                    <td width="250" class="left">Berdasarkan</td>
+                    <td class="left">
+                        <com:TActiveDropDownList ID="cmbBerdasarkan" AutoPostBack="false">
+                            <com:TListItem Value="kode" Text="Kode Kegiatan" />
+                            <com:TListItem Value="nama" Text="Nama Kegiatan" />
+                        </com:TActiveDropDownList>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="left">Kriteria</td>
+                    <td class="left">
+                        <com:TActiveTextBox ID="txtKriteria" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="left"></td>
+                    <td class="left">
+                        <com:TActiveButton ID="btnSearch" OnClick="filterRecord" Text="Search" ValidationGroup="filterForm" CssClass="input-submit">
+                            <prop:ClientSide.OnPreDispatch>
+                                $('loadingbar').show();			                                
+                            </prop:ClientSide.OnPreDispatch>
+                            <prop:ClientSide.OnLoading>
+                                $('<%=$this->btnSearch->ClientId%>').disabled='disabled';									
+                            </prop:ClientSide.OnLoading>
+                            <prop:ClientSide.onComplete>
+                                $('<%=$this->btnSearch->ClientId%>').disabled='';																								                                
+                                $('loadingbar').hide();
+                            </prop:ClientSide.OnComplete>
+                        </com:TActiveButton>
+                        <com:TRequiredFieldValidator ControlToValidate="txtKriteria" ErrorMessage="Nama kriteria harap di isi" Display="Dynamic" ValidationGroup="filterForm" FocusOnError="true" />
+                    </td>
+                </tr>            
+            </tbody>
+        </table>
+		<com:TActiveRepeater ID="RepeaterS" AllowPaging="true" AllowCustomPaging="true" DataKeyField="idproyek" PageSize="10">
+			<prop:HeaderTemplate>	
+                <table class="list">		
+                    <thead>                          
+                        <tr>
+                            <th width="25" rowspan="2">No</th>
+                            <th width="120" rowspan="2">Kode Kegiatan</th>
+                            <th width="400" rowspan="2">Nama Kegiatan</th>
+                            <th colspan="3">Bulan Realisasi (<%#$this->page->TGL->tanggal('F',date('Y-').$this->page->session['bulanrealisasi'].date('-d'))%>)</th>                            
+                            <th width="100" rowspan="2">Actions</th>
+                        </tr>                       
+                        <tr>
+                            <th width="160">Pagu Dana <br />(Total PAGU pada Uraian)</th>
+                            <th width="160">SP2D</th>
+                            <th width="160">Realisasi</th>				
+                        </tr>
+                    </thead>
+                </prop:HeaderTemplate>	
+                <prop:ItemTemplate>
+                    <tr>
+                        <td class="center"><%#$this->Data['no']%></td>
+                        <td class="center"><%#$this->Data['kode_proyek']%></td>	
+                        <td class="left"><%#$this->Data['nama_proyek']%></td>
+                        <td class="right"><%#$this->Data['totalPagu']%></td>
+                        <td class="right"><%#$this->Data['totalTarget']%></td>
+                        <td class="right"><%#$this->Data['totalRealisasi']%></td>
+                        <td class="center">
+                           <com:TActiveLinkButton ID="btnView" Text="Details" OnClick="page.viewRecord" ClientSide.PostState="false"/> 					                            					                           
+                        </td>
+                    </tr>
+                </prop:ItemTemplate>	
+                <prop:AlternatingItemTemplate>
+                    <tr>
+                        <td class="center"><%#$this->Data['no']%></td>
+                        <td class="center"><%#$this->Data['kode_proyek']%></td>	
+                        <td class="left"><%#$this->Data['nama_proyek']%></td>
+                        <td class="right"><%#$this->Data['totalPagu']%></td>
+                        <td class="right"><%#$this->Data['totalTarget']%></td>
+                        <td class="right"><%#$this->Data['totalRealisasi']%></td>
+                        <td class="center">
+                           <com:TActiveLinkButton ID="btnView" Text="Details" OnClick="page.viewRecord" ClientSide.PostState="false"/> 					                            					                           
+                        </td>
+                    </tr>
+                </prop:AlternatingItemTemplate>	
+                <prop:FooterTemplate>
+                    </table>
+                </prop:FooterTemplate>	
+                <prop:EmptyTemplate>
+                    <p class="msg info">
+                        Belum ada Kegiatan Pada Tahun Anggaran <%#$this->Page->session['ta']%> .
+                    </p>                
+                </prop:EmptyTemplate>
+		</com:TActiveRepeater>		
+		<%include Application.Paging%> 
+	</com:TPanel>
+</com:TContent>

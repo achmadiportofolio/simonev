@@ -1,0 +1,126 @@
+<%@ Title="Data Master::Lokasi::Daerah Tingkat II" %>
+<com:TContent ID="leftcontent">
+    <%include Application.pages.m.dmaster.LeftMenu%>
+</com:TContent>	
+<com:TContent ID="header">Daerah Tingkat II</com:TContent>
+<com:TContent ID="content">
+	<com:TPanel Visible="<%= $this->getAddProcess(false) %>">
+		<com:THiddenField ID="hiddenidnegara" />
+        <com:THiddenField ID="hiddennamanegara" />
+		<h3 class="tit">Tambah DT II</h3>		
+		<table class="list">
+			<tr>
+				<td width="150" class="left">Nama DT I</td>
+				<td class="left"><com:TDropDownList ID="cmbAddDTI" />
+					<com:TRequiredFieldValidator ControlToValidate="cmbAddDTI" ErrorMessage="<p class='msg error'>Pilih DT I</p>" Display="Dynamic" InitialValue="none" ValidationGroup="addDt2" FocusOnError="true" />
+				
+			</tr>
+			<tr>
+				<td class="left">Nama Daerah Tingkat II</td>
+				<td class="left"><com:TTextBox ID="txtAddNamaDT2" Columns="30" MaxLength="30" />
+					<com:TRequiredFieldValidator ControlToValidate="txtAddNamaDT2" Display="Dynamic" ErrorMessage="<p class='msg error'>Isi Nama DT II</p>" ValidationGroup="addDt2" FocusOnError="true" />										
+                    <com:TActiveCustomValidator ID="checkAddNamaDT2" ControlToValidate="txtAddNamaDT2" Display="Dynamic" OnServerValidate="checkNamaDT2" ValidationGroup="addDt2" ErrorMessage="<p class='msg error'>Nama DT II Yang Anda Inputkan Sudah Ada</p>" FocusOnError="true" />					
+				</td>
+			</tr>
+			<tr>
+				<td class="left">&nbsp;</td>
+				<td class="left">
+                    <com:TActiveButton ID="btnSave" Text="Save" ValidationGroup="addDt2" OnClick="saveData" CssClass="input-submit">
+                        <prop:ClientSide.OnPreDispatch>
+                            $('loadingbar').show();			                                
+                        </prop:ClientSide.OnPreDispatch>
+                        <prop:ClientSide.OnLoading>
+                            $('<%=$this->btnSave->ClientId%>').disabled='disabled';									
+                        </prop:ClientSide.OnLoading>
+                        <prop:ClientSide.onComplete>
+                            $('<%=$this->btnSave->ClientId%>').disabled='';																								                                
+                            $('loadingbar').hide();
+                        </prop:ClientSide.OnComplete>
+                    </com:TActiveButton>
+                </td>
+			</tr>
+		</table>		
+	</com:TPanel>
+	<com:TPanel Visible="<%= $this->getEditProcess(false) %>">
+        <com:THiddenField ID="hiddeniddt2" />
+        <com:THiddenField ID="hiddennamadt2" />
+		<h3 class="tit">Edit DT II</h3>		
+		<table class="list">
+			<tr>
+				<td width="150" class="left">Nama DT I</td>
+				<td class="left"><com:TDropDownList ID="cmbEditDTI" />
+					<com:TRequiredFieldValidator ControlToValidate="cmbEditDTI" ErrorMessage="<p class='msg error'>Pilih DT I</p>" Display="Dynamic" InitialValue="none" ValidationGroup="editDt2" FocusOnError="true" />				
+			</tr>
+			<tr>
+				<td class="left">Nama Daerah Tingkat II</td>
+				<td class="left"><com:TTextBox ID="txtEditNamaDT2" Columns="30" MaxLength="30" />
+					<com:TRequiredFieldValidator ControlToValidate="txtEditNamaDT2" Display="Dynamic" ErrorMessage="<p class='msg error'>Isi Nama DT II</p>" ValidationGroup="editDt2" FocusOnError="true" />										                    
+                    <com:TActiveCustomValidator ID="checkEditNamaDT2" ControlToValidate="txtEditNamaDT2" Display="Dynamic" OnServerValidate="checkNamaDT2" ValidationGroup="editDt2" ErrorMessage="<p class='msg error'>Nama DT II Yang Anda Inputkan Sudah Ada</p>" FocusOnError="true" />					
+				</td>
+			</tr>
+			<tr>
+				<td class="left">&nbsp;</td>
+				<td class="left">
+                    <com:TActiveButton ID="btnUpdate" Text="Update" ValidationGroup="editDt2" OnClick="updateData" CssClass="input-submit">
+                        <prop:ClientSide.OnPreDispatch>
+                            $('loadingbar').show();			                                
+                        </prop:ClientSide.OnPreDispatch>
+                        <prop:ClientSide.OnLoading>
+                            $('<%=$this->btnUpdate->ClientId%>').disabled='disabled';									
+                        </prop:ClientSide.OnLoading>
+                        <prop:ClientSide.onComplete>
+                            $('<%=$this->btnUpdate->ClientId%>').disabled='';																								                                
+                            $('loadingbar').hide();
+                        </prop:ClientSide.OnComplete>
+                    </com:TActiveButton>
+                </td>
+			</tr>
+		</table>	
+	</com:TPanel>
+	<com:TPanel Visible="<%= $this->getDefaultProcess() %>">
+		<div class="controlbox">
+            <p id="btn-create" class="box"><com:TLinkButton Text="<span>Tambah DT II</span>" OnClick="addProcess" ID="add" CausesValidation="false" /></p>
+        </div>                
+        <br />
+		<com:TActiveRepeater ID="RepeaterS" DataKeyField="iddt2" AllowPaging="true" PageSize="10" AllowCustomPaging="true">
+            <prop:HeaderTemplate>			
+                <table cellpadding="0" class="list">	
+                    <thead>
+                    <tr>
+                        <th width="15" class="center">No</th>                        
+                        <th class="center">DT I</th>                        
+                        <th class="center">Nama DT II</th>
+                        <th width="160" class="center">Actions</th>							
+                    </tr>								
+                    </thead>
+                    <tbody>
+            </prop:HeaderTemplate>
+            <prop:ItemTemplate>
+                <tr>				
+                    <td class="center"><%#$this->DataItem['no']%></td>                    
+                    <td class="left"><%#$this->DataItem['nama_dt1']%></td>											                   
+                    <td class="left"><%#$this->DataItem['nama_dt2']%></td>
+                    <td class="center" width="90"><com:TButton CssClass="input-submit"  Text="Edit" OnClick="Page.editRecord" /> <com:TActiveButton CssClass="input-submit" Text="Delete" OnClick="Page.deleteRecord" /></td>
+                </tr>
+            </prop:ItemTemplate>				
+            <prop:AlternatingItemTemplate>
+                <tr>				
+                    <td class="center"><%#$this->DataItem['no']%></td>                    
+                    <td class="left"><%#$this->DataItem['nama_dt1']%></td>											                   
+                    <td class="left"><%#$this->DataItem['nama_dt2']%></td>
+                    <td class="center" width="90"><com:TButton CssClass="input-submit"  Text="Edit" OnClick="Page.editRecord" /> <com:TActiveButton CssClass="input-submit" Text="Delete" OnClick="Page.deleteRecord" /></td>
+                </tr>
+            </prop:AlternatingItemTemplate>
+            <prop:FooterTemplate>               
+                </tbody>
+                </table>
+            </prop:FooterTemplate>	
+            <prop:EmptyTemplate>
+                <p class="msg info">
+                    no record.
+                </p>                
+            </prop:EmptyTemplate>
+        </com:TActiveRepeater>
+        <%include Application.Paging%>	
+	</com:TPanel>	
+</com:TContent>

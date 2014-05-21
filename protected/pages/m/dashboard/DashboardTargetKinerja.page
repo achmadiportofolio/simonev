@@ -1,0 +1,66 @@
+<%@ Title="Dashboard - Target Realisasi" %>
+<com:TContent ID="leftcontent">
+    <%include Application.pages.m.dashboard.LeftMenu%>
+</com:TContent>
+<com:TContent ID="contenttoolbar">
+    <%include Application.layouts.Toolbars%>
+</com:TContent>
+<com:TContent ID="header">
+    Persentase Target dan Realisasi Fisik Tahun <%=$this->session['ta']%>
+</com:TContent>
+<com:TContent ID="content">	
+	<com:TActivePanel Visible="<%= $this->getDefaultProcess() %>">	                       		
+        <img src="<%=$this->Service->constructUrl('m.dashboard.PersentaseTargetRealisasiFisikChart')%>" /> 
+        <h1>Persentase Target dan Realisasi Keuangan Tahun <%=$this->session['ta']%></h1>
+        <img src="<%=$this->Service->constructUrl('m.dashboard.PersentaseTargetRealisasiKeuanganChart')%>" /> 
+        <h1>Target dan Realisasi SKPD s.d <%=$this->page->TGL->tanggal('F Y',$this->session['ta'].'-'.$this->session['bulanrealisasi'].date('-d'))%></h1>
+        <com:TActiveRepeater ID="RepeaterS" OnItemCreated="itemCreated">
+            <prop:HeaderTemplate>			
+                <table cellpadding="0" class="list">	
+                    <thead>
+                    <tr>
+                        <th width="10" class="center">No</th>                        
+                        <th class="center" width="300">Nama SKPD</th>                                                
+                        <th width="15" class="center">Target <br />Fisik (%)</th>
+                        <th width="15" class="center">Realisasi <br />Fisik (%)</th>
+                        <th width="20" class="center">Target <br />Keuangan (%)</th>
+                        <th width="15" class="center">Realisasi <br />Keuangan (%)</th>
+                        <th width="20" class="center">Target <br />Keuangan (Rp.)</th>
+                        <th width="15" class="center">Realisasi <br />Keuangan (Rp.)</th>                        
+                    </tr>								
+                    </thead>
+                    <tbody>
+            </prop:HeaderTemplate>
+            <prop:ItemTemplate>
+                <tr>				
+                    <td class="center"><%#$this->DataItem['no']%></td>                    
+                    <td class="left"><%#$this->DataItem['nama_unit']%></td>											                                       
+                    <td class="center"><%#$this->DataItem['target_fisik']%></td>
+                    <td class="center"><%#$this->DataItem['persen_realisasi_fisik']%></td>
+                    <td class="center"><%#$this->DataItem['target_sp2d']%></td>
+                    <td class="center"><%#$this->DataItem['persen_realisasi_sp2d']%></td>
+                    <td class="right"><%#$this->Page->finance->toRupiah($this->DataItem['jumlah_target_sp2d'])%></td>
+                    <td class="right"><%#$this->Page->finance->toRupiah($this->DataItem['jumlah_realisasi_sp2d'])%></td>
+                </tr>
+            </prop:ItemTemplate>				            
+            <prop:FooterTemplate>               
+                    <tr>				
+                        <td class="center" colspan="2">Jumlah</td>                                            
+                        <td class="center"><%=round(DashboardTargetKinerja::$totalPersenTargetFisik/$this->Page->RepeaterS->Items->getCount())%></td>
+                        <td class="center"><%=round(DashboardTargetKinerja::$totalPersenRealisasiFisik/$this->Page->RepeaterS->Items->getCount())%></td>
+                        <td class="center"><%=round(DashboardTargetKinerja::$totalPersenTargetKeuangan/$this->Page->RepeaterS->Items->getCount())%></td>
+                        <td class="center"><%=round(DashboardTargetKinerja::$totalPersenRealisasiKeuangan/$this->Page->RepeaterS->Items->getCount())%></td>
+                        <td class="center"><%=$this->Page->finance->toRupiah(DashboardTargetKinerja::$totalRpTargetKeuangan)%></td>
+                        <td class="center"><%=$this->Page->finance->toRupiah(DashboardTargetKinerja::$totalRpRealisasiKeuangan)%></td>
+                    </tr>
+                </tbody>
+                </table>
+            </prop:FooterTemplate>	
+            <prop:EmptyTemplate>
+                <p class="msg info">
+                    no record.
+                </p>                
+            </prop:EmptyTemplate>
+        </com:TActiveRepeater>
+    </com:TActivePanel>
+</com:TContent>

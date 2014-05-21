@@ -1,0 +1,146 @@
+<%@ Title="Reports" %>
+<com:TContent ID="leftcontent">
+    <%include Application.pages.t.report.LeftMenu%>
+</com:TContent>
+<com:TContent ID="header">Reports Summary</com:TContent>
+<com:TContent ID="contenttoolbar">
+    <%include Application.layouts.Toolbars%>
+</com:TContent>
+<com:TContent ID="content">
+    <p style="text-align:center">
+        <com:TActiveImage ID="reportChart" />
+    </p>
+    <h3 class="tit">Rekap Kegiatan (Tahun Anggaran <com:TActiveLabel Text="<%=$this->session['ta']%>" />)</h3>
+    <table class="list">
+        <thead>
+            <tr>
+                <th class="center" colspan="2">Jumlah Kegiatan Fisik</th>
+                <th class="center" colspan="2">Jumlah Kegiatan Pengadaan</th>
+                <th class="center" colspan="2">Jumlah Kegiatan Jasa <br />Konsultasi Perencanaan</th>
+                <th class="center" colspan="2">Jumlah Kegiatan Jasa <br />Konsultasi Pengawasan</th>
+            </tr>
+            <tr>
+                <th class="center">Lelang</th>
+                <th class="center">PL</th>
+                <th class="center">Lelang</th>
+                <th class="center">PL</th>
+                <th class="center">Lelang</th>
+                <th class="center">PL</th>
+                <th class="center">Lelang</th>
+                <th class="center">PL</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="center"><com:TActiveLabel Text="<%=$this->dataRekapKegiatan['lelangfisik']%>" /></td>
+                <td class="center"><com:TActiveLabel Text="<%=$this->dataRekapKegiatan['plfisik']%>" /></td>
+                <td class="center"><com:TActiveLabel Text="<%=$this->dataRekapKegiatan['lelangpengadaan']%>" /></td>
+                <td class="center"><com:TActiveLabel Text="<%=$this->dataRekapKegiatan['plpengadaan']%>" /></td>                                
+                <td class="center"><com:TActiveLabel Text="<%=$this->dataRekapKegiatan['lelangperencanaan']%>" /></td>
+                <td class="center"><com:TActiveLabel Text="<%=$this->dataRekapKegiatan['plperencanaan']%>" /></td>
+                <td class="center"><com:TActiveLabel Text="<%=$this->dataRekapKegiatan['lelangpengawasan']%>" /></td>
+                <td class="center"><com:TActiveLabel Text="<%=$this->dataRekapKegiatan['plpengawasan']%>" /></td>                                                
+            </tr>
+        </tbody>
+    </table>
+    <h3 class="tit">Jumlah Kegiatan yang Sudah di Lelang (Tahun Anggaran <com:TActiveLabel Text="<%=$this->session['ta']%>" />)</h3>
+    <table class="list">
+        <thead>
+            <tr>
+                <th class="center" colspan="2">Jumlah Kegiatan Fisik</th>
+                <th class="center" colspan="2">Jumlah Kegiatan Pengadaan</th>
+                <th class="center" colspan="2">Jumlah Kegiatan Jasa <br />Konsultasi Perencanaan</th>
+                <th class="center" colspan="2">Jumlah Kegiatan Jasa <br />Konsultasi Pengawasan</th>
+            </tr>
+            <tr>
+                <th class="center">Lelang</th>
+                <th class="center">PL</th>
+                <th class="center">Lelang</th>
+                <th class="center">PL</th>
+                <th class="center">Lelang</th>
+                <th class="center">PL</th>
+                <th class="center">Lelang</th>
+                <th class="center">PL</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="center"><com:TActiveLabel Text="<%=$this->dataKegiatanSudahDilelang['lelangfisik']%>" /></td>
+                <td class="center"><com:TActiveLabel Text="<%=$this->dataKegiatanSudahDilelang['plfisik']%>" /></td>
+                <td class="center"><com:TActiveLabel Text="<%=$this->dataKegiatanSudahDilelang['lelangpengadaan']%>" /></td>
+                <td class="center"><com:TActiveLabel Text="<%=$this->dataKegiatanSudahDilelang['plpengadaan']%>" /></td>                                
+                <td class="center"><com:TActiveLabel Text="<%=$this->dataKegiatanSudahDilelang['lelangperencanaan']%>" /></td>
+                <td class="center"><com:TActiveLabel Text="<%=$this->dataKegiatanSudahDilelang['plperencanaan']%>" /></td>
+                <td class="center"><com:TActiveLabel Text="<%=$this->dataKegiatanSudahDilelang['lelangpengawasan']%>" /></td>
+                <td class="center"><com:TActiveLabel Text="<%=$this->dataKegiatanSudahDilelang['plpengawasan']%>" /></td>                                                
+            </tr>
+        </tbody>
+    </table>
+    <h3 class="tit">Jumlah Kegiatan dalam Proses Lelang (Tahun Anggaran <com:TActiveLabel Text="<%=$this->session['ta']%>" />)</h3>
+    <table class="list">
+        <thead>
+            <tr>
+                <th class="center" colspan="2">Jumlah Kegiatan Fisik</th>
+                <th class="center" colspan="2">Jumlah Kegiatan Pengadaan</th>
+                <th class="center" colspan="2">Jumlah Kegiatan Jasa <br />Konsultasi Perencanaan</th>
+                <th class="center" colspan="2">Jumlah Kegiatan Jasa <br />Konsultasi Pengawasan</th>
+            </tr>
+            <tr>
+                <th class="center">Lelang</th>
+                <th class="center">PL</th>
+                <th class="center">Lelang</th>
+                <th class="center">PL</th>
+                <th class="center">Lelang</th>
+                <th class="center">PL</th>
+                <th class="center">Lelang</th>
+                <th class="center">PL</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="center"><com:TActiveLabel Text="<%=$this->dataKegiatanProsesLelang['lelangfisik']%>" /></td>
+                <td class="center"><com:TActiveLabel Text="<%=$this->dataKegiatanProsesLelang['plfisik']%>" /></td>
+                <td class="center"><com:TActiveLabel Text="<%=$this->dataKegiatanProsesLelang['lelangpengadaan']%>" /></td>
+                <td class="center"><com:TActiveLabel Text="<%=$this->dataKegiatanProsesLelang['plpengadaan']%>" /></td>                                
+                <td class="center"><com:TActiveLabel Text="<%=$this->dataKegiatanProsesLelang['lelangperencanaan']%>" /></td>
+                <td class="center"><com:TActiveLabel Text="<%=$this->dataKegiatanProsesLelang['plperencanaan']%>" /></td>
+                <td class="center"><com:TActiveLabel Text="<%=$this->dataKegiatanProsesLelang['lelangpengawasan']%>" /></td>
+                <td class="center"><com:TActiveLabel Text="<%=$this->dataKegiatanProsesLelang['plpengawasan']%>" /></td>                                                
+            </tr>
+        </tbody>
+    </table>
+    <h3 class="tit">Jumlah Kegiatan yang Belum Dilelang (Tahun Anggaran <com:TActiveLabel Text="<%=$this->session['ta']%>" />)</h3>
+    <table class="list">
+        <thead>
+            <tr>
+                <th class="center" colspan="2">Jumlah Kegiatan Fisik</th>
+                <th class="center" colspan="2">Jumlah Kegiatan Pengadaan</th>
+                <th class="center" colspan="2">Jumlah Kegiatan Jasa <br />Konsultasi Perencanaan</th>
+                <th class="center" colspan="2">Jumlah Kegiatan Jasa <br />Konsultasi Pengawasan</th>
+            </tr>
+            <tr>
+                <th class="center">Lelang</th>
+                <th class="center">PL</th>
+                <th class="center">Lelang</th>
+                <th class="center">PL</th>
+                <th class="center">Lelang</th>
+                <th class="center">PL</th>
+                <th class="center">Lelang</th>
+                <th class="center">PL</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="center"><com:TActiveLabel Text="<%=$this->dataKegiatanBelumDilelang['lelangfisik']%>" /></td>
+                <td class="center"><com:TActiveLabel Text="<%=$this->dataKegiatanBelumDilelang['plfisik']%>" /></td>
+                <td class="center"><com:TActiveLabel Text="<%=$this->dataKegiatanBelumDilelang['lelangpengadaan']%>" /></td>
+                <td class="center"><com:TActiveLabel Text="<%=$this->dataKegiatanBelumDilelang['plpengadaan']%>" /></td>                                
+                <td class="center"><com:TActiveLabel Text="<%=$this->dataKegiatanBelumDilelang['lelangperencanaan']%>" /></td>
+                <td class="center"><com:TActiveLabel Text="<%=$this->dataKegiatanBelumDilelang['plperencanaan']%>" /></td>
+                <td class="center"><com:TActiveLabel Text="<%=$this->dataKegiatanBelumDilelang['lelangpengawasan']%>" /></td>
+                <td class="center"><com:TActiveLabel Text="<%=$this->dataKegiatanBelumDilelang['plpengawasan']%>" /></td>                                                
+            </tr>
+        </tbody>
+    </table>
+</com:TContent>
+

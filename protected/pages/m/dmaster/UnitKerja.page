@@ -1,0 +1,141 @@
+<%@ Title="Data Master::Unit Kerja" %>
+<com:TContent ID="leftcontent">
+    <%include Application.pages.m.dmaster.LeftMenu%>
+</com:TContent>
+<com:TContent ID="header">Unit Kerja</com:TContent>
+<com:TContent ID="content">
+	<com:TPanel Visible="<%= $this->getAddProcess(false) %>">		
+		<h3 class="tit">Tambah Unit Kerja</h3>	
+		<table class="list">
+			<tr>
+				<td class="left" width="150">Nama Bagian</td>
+            </tr>
+            <tr>
+				<td class="left"><com:TActiveDropDownList ID="cmbAddBagian" OnSelectedIndexChanged="cmbBagianChanged" />		
+                    <com:TRequiredFieldValidator ControlToValidate="cmbAddBagian" InitialValue="none" Display="Dynamic" ErrorMessage="<p class='msg error'>Pilih Nama Bagian</p>" ValidationGroup="addUnitKerja" FocusOnError="true" />				
+                </td>
+			</tr>
+			<tr>
+				<td class="left">Kode Unit Kerja</td>
+            </tr>
+            <tr>
+				<td class="left">				
+                    <com:TActiveLabel ID="lblAddKodeBagian" ForeColor="red" />				
+                    <com:TActiveTextBox ID="txtAddKodeUnitKerja" Columns="5" MaxLength="5" />				
+                    <com:TRequiredFieldValidator ControlToValidate="txtAddKodeUnitKerja" Display="Dynamic" ErrorMessage="<p class='msg error'>Isi Kode Unit Kerja</p>" ValidationGroup="addUnitKerja" FocusOnError="true" />				
+                    <com:TActiveCustomValidator ID="checkAddKodeUnitKerja" ControlToValidate="txtAddKodeUnitKerja" Display="Dynamic" OnServerValidate="checkKodeUnitKerja" ValidationGroup="addUnitKerja" ErrorMessage="<p class='msg error'>Kode Bagian Yang Anda Inputkan Sudah Ada</p>" FocusOnError="true" />					
+                </td>
+            </tr>
+			<tr>
+				<td class="left">Nama Unit Kerja</td>
+            </tr>
+            <tr>
+				<td class="left">								
+                    <com:TActiveTextBox ID="txtAddNamaUnitKerja" Columns="30" />		
+                    <com:TRequiredFieldValidator ControlToValidate="txtAddNamaUnitKerja" Display="Dynamic" ErrorMessage="<p class='msg error'>Isi Nama Unit Kerja</p>" ValidationGroup="addUnitKerja" FocusOnError="true" />				
+				</td>		
+			</tr>
+			<tr>				
+				<td class="left"><com:TActiveButton ID="btnSave" Text="Save" ValidationGroup="addUnitKerja" OnClick="saveData" CssClass="input-submit">
+                        <prop:ClientSide.OnPreDispatch>
+                            $('loadingbar').show();			                                
+                        </prop:ClientSide.OnPreDispatch>
+                        <prop:ClientSide.OnLoading>
+                            $('<%=$this->btnSave->ClientId%>').disabled='disabled';									
+                        </prop:ClientSide.OnLoading>
+                        <prop:ClientSide.onComplete>
+                            $('<%=$this->btnSave->ClientId%>').disabled='';																								                                
+                            $('loadingbar').hide();
+                        </prop:ClientSide.OnComplete>
+                    </com:TActiveButton>
+                </td>
+			</tr>
+		</table>		
+	</com:TPanel>
+	<com:TPanel Visible="<%= $this->getEditProcess(false) %>">
+		<com:THiddenField ID="hiddenkodeunit" />	
+		<h3 class="tit">Edit Unit Kerja</h3>
+		<table class="list">			
+			<tr>
+				<td class="left" width="150">Kode Unit Kerja</td>
+				<td class="left">				
+                    <com:TActiveLabel ID="lblEditKodeBagian" ForeColor="red" />				
+                    <com:TActiveTextBox ID="txtEditKodeUnitKerja" Columns="5" MaxLength="5"/>				
+                    <com:TRequiredFieldValidator ControlToValidate="txtEditKodeUnitKerja" Display="Dynamic" ErrorMessage="<p class='msg error'>Isi Kode Unit Kerja</p>" ValidationGroup="editUnitKerja" FocusOnError="true" />				
+                    <com:TActiveCustomValidator ID="checkEditKodeUnitKerja" ControlToValidate="txtEditKodeUnitKerja" Display="Dynamic" OnServerValidate="checkKodeUnitKerja" ValidationGroup="editUnitKerja" ErrorMessage="Kode unit kerja Yang Anda Inputkan Sudah Ada" FocusOnError="true" />					
+                </td>
+			<tr>
+				<td class="left">Nama Unit Kerja</td>
+				<td class="left">								
+                    <com:TActiveTextBox ID="txtEditNamaUnitKerja" Columns="30" />		
+                    <com:TRequiredFieldValidator ControlToValidate="txtEditNamaUnitKerja" Display="Dynamic" ErrorMessage="<p class='msg error'>Isi Nama Unit Kerja</p>" ValidationGroup="editUnitKerja" FocusOnError="true" />				
+				</td>		
+			</tr>
+			<tr>
+				<td class="left">&nbsp;</td>
+				<td class="left"><com:TActiveButton ID="btnUpdate" Text="Update" ValidationGroup="editUnitKerja" OnClick="updateData" CssClass="input-submit">
+                        <prop:ClientSide.OnPreDispatch>
+                            $('loadingbar').show();			                                
+                        </prop:ClientSide.OnPreDispatch>
+                        <prop:ClientSide.OnLoading>
+                            $('<%=$this->btnUpdate->ClientId%>').disabled='disabled';									
+                        </prop:ClientSide.OnLoading>
+                        <prop:ClientSide.onComplete>
+                            $('<%=$this->btnUpdate->ClientId%>').disabled='';																								                                
+                            $('loadingbar').hide();
+                        </prop:ClientSide.OnComplete>
+                    </com:TActiveButton>
+                </td>
+			</tr>
+		</table>		
+	</com:TPanel>
+	<com:TPanel Visible="<%= $this->getDefaultProcess() %>">
+        <div class="controlbox">
+            <p id="btn-create" class="box"><com:TLinkButton Text="<span>Tambah Unit Kerja</span>" OnClick="addProcess" ID="add" CausesValidation="false" /></p>
+        </div>                
+        <br />
+		<com:TActiveRepeater ID="RepeaterS" DataKeyField="idunit" AllowPaging="true" PageSize="10" AllowCustomPaging="true">
+            <prop:HeaderTemplate>			
+                <table cellpadding="0" class="list">	
+                    <thead>
+                    <tr>
+                        <th width="15" class="center">No</th>
+                        <th width="100" class="center">Kode Unit Kerja</th>
+                        <th class="center" width="300">Nama Bagian</th>
+                        <th class="center">Nama Unit Kerja</th>                        
+                        <th width="160" class="center">Actions</th>							
+                    </tr>								
+                    </thead>
+                    <tbody>
+            </prop:HeaderTemplate>
+            <prop:ItemTemplate>
+                <tr>				
+                    <td class="center"><%#$this->DataItem['no']%></td>
+                    <td class="center"><%#$this->DataItem['kode_unit']%></td>	
+                    <td class="left"><%#$this->DataItem['nama_bagian']%></td>
+                    <td class="left"><%#$this->DataItem['nama_unit']%></td>											                   
+                    <td class="center"><com:TButton CssClass="input-submit"  Text="Edit" OnClick="Page.editRecord" /> <com:TActiveButton CssClass="input-submit" Text="Delete" OnClick="Page.deleteRecord" ClientSide.PostState="false" Attributes.OnClick="if(!confirm('Dengan menghapus ini maka unit kerja, program, dst; akan ikut terhapus juga ?')) return false;" /></td>
+                </tr>
+            </prop:ItemTemplate>				
+            <prop:AlternatingItemTemplate>
+               <tr>				
+                    <td class="center"><%#$this->DataItem['no']%></td>
+                    <td class="center"><%#$this->DataItem['kode_unit']%></td>	
+                    <td class="left"><%#$this->DataItem['nama_bagian']%></td>
+                    <td class="left"><%#$this->DataItem['nama_unit']%></td>											                   
+                    <td class="center"><com:TButton CssClass="input-submit"  Text="Edit" OnClick="Page.editRecord" /> <com:TActiveButton CssClass="input-submit" Text="Delete" OnClick="Page.deleteRecord" ClientSide.PostState="false" Attributes.OnClick="if(!confirm('Dengan menghapus ini maka unit kerja, program, dst; akan ikut terhapus juga ?')) return false;" /></td>
+                </tr>
+            </prop:AlternatingItemTemplate>
+            <prop:FooterTemplate>               
+                </tbody>
+                </table>
+            </prop:FooterTemplate>	
+            <prop:EmptyTemplate>
+                <p class="msg info">
+                    no record.
+                </p>                
+            </prop:EmptyTemplate>
+        </com:TActiveRepeater>
+        <%include Application.Paging%> 				
+	</com:TPanel>
+</com:TContent>

@@ -1,0 +1,90 @@
+<%@ Title="Reports::Form B" %>
+<com:TContent ID="leftcontent">
+    <%include Application.pages.d.report.LeftMenu%>
+</com:TContent>
+<com:TContent ID="header">
+    Form B Realisasi (Tahun Anggaran <com:TActiveLabel Text="<%=$this->session['ta']%>" />) Posisi Pada Bulan
+    <com:TActiveLabel Text="<%=$this->page->TGL->tanggal('F',date('Y-').$this->session['bulanrealisasi'].date('-d'))%>" />
+</com:TContent>
+<com:TContent ID="contenttoolbar">
+    <%include Application.layouts.Toolbars%>
+</com:TContent>
+<com:TContent ID="content">		
+    <com:TClientScript>
+        createCookie('style', '1col', 365);
+    </com:TClientScript>
+    <com:TPanel Visible="<%= $this->getDefaultProcess() %>">    
+        <%include Application.pages.d.report.ToolbarControls%>
+        <div class="controlbox">            
+            <com:TActiveButton ID="btnPrint" Text="Print"  OnClick="Page.showPrintOutModal" ClientSide.PostState="False" CssClass="input-submit">
+                <prop:ClientSide.OnPreDispatch>
+                    $('loadingbar').show();			                                
+                </prop:ClientSide.OnPreDispatch>
+                <prop:ClientSide.OnLoading>
+                    $('<%=$this->btnPrint->ClientId%>').disabled='disabled';									
+                </prop:ClientSide.OnLoading>
+                <prop:ClientSide.onComplete>
+                    $('<%=$this->btnPrint->ClientId%>').disabled='';																								                                
+                    $('loadingbar').hide();
+                </prop:ClientSide.OnComplete>
+            </com:TActiveButton>
+        </div>
+        <h3 class="tit">Filters & Search</h3>        
+        <table class="list">		
+            <thead>
+                <tr>
+                    <td class="left">Filters</td>
+                </tr>
+            </thead>
+            <tbody>                          
+                <tr>
+                    <td class="left"><strong>Program :</strong></td>
+                </tr>
+                <tr>
+                    <td class="left">
+                        <div>
+                            <com:TListBox ID="listProgram" Attributes.data-placeholder="Pilih program" CssClass="chosen-select" SelectionMode="Multiple" Width="800px" />
+                        </div>
+                        <com:TClientScript>
+                            document.observe('dom:loaded', function(evt) {
+                                var config = {
+                                  '.chosen-select'           : {},
+                                  '.chosen-select-deselect'  : {allow_single_deselect:true},
+                                  '.chosen-select-no-single' : {disable_search_threshold:10},
+                                  '.chosen-select-no-results': {no_results_text: "Oops, nothing found!"},
+                                  '.chosen-select-width'     : {width: "95%"}
+                                }
+                                var results = [];
+                                for (var selector in config) {
+                                  var elements = $$(selector);
+                                  for (var i = 0; i < elements.length; i++) {                                    
+                                    results.push(new Chosen(elements[i],config[selector]));
+                                  }
+                                }
+                                return results;
+                            });
+                        </com:TClientScript>
+                    </td>
+                </tr>  
+                <tr>                    
+                    <td class="left">
+                        <com:TActiveButton ID="btnSearch" OnClick="filterRecord" Text="Search" ValidationGroup="filterForm" CssClass="input-submit">
+                            <prop:ClientSide.OnPreDispatch>
+                                $('loadingbar').show();			                                
+                            </prop:ClientSide.OnPreDispatch>
+                            <prop:ClientSide.OnLoading>
+                                $('<%=$this->btnSearch->ClientId%>').disabled='disabled';									
+                            </prop:ClientSide.OnLoading>
+                            <prop:ClientSide.onComplete>
+                                $('<%=$this->btnSearch->ClientId%>').disabled='';																								                                
+                                $('loadingbar').hide();
+                            </prop:ClientSide.OnComplete>
+                        </com:TActiveButton>                        
+                    </td>
+                </tr>    
+            </tbody>
+        </table>                     
+        <com:TActiveLabel ID="contentReport" />		
+        <com:TActiveLabel ID="footerReport" />			
+	</com:TPanel>
+</com:TContent>

@@ -1,0 +1,342 @@
+<%@ Title="Data Pendapatan - Realisasi Penerimaan" %>
+<com:TContent ID="leftcontent">
+    <%include Application.pages.s.pendapatan.LeftMenu%>
+</com:TContent>
+<com:TContent ID="header">Realisasi Penerimaan Tahun <com:TActiveLabel Text="<%=$this->session['ta']%>" /></com:TContent>
+<com:TContent ID="contenttoolbar">
+    <%include Application.layouts.ToolbarPendapatan%>
+</com:TContent>
+<com:TContent ID="content">    	    		
+    <com:TPanel Visible="<%= $this->getAddProcess(false) %>">                         
+        <h3 class="tit">Data Rekening Pendapatan</h3>
+        <table class="list">          
+            <tr>				
+                <td class="left"><%=$_SESSION['currentPageRealisasiTarget']['dataPendapatan']['no_rek2'].' - '.$_SESSION['currentPageRealisasiTarget']['dataPendapatan']['nama_rek2']%></td>                
+            </tr>
+            <tr>				
+                <td class="left"><%=$_SESSION['currentPageRealisasiTarget']['dataPendapatan']['no_rek3'].' - '.$_SESSION['currentPageRealisasiTarget']['dataPendapatan']['nama_rek3']%></td>                
+            </tr>
+            <tr>				
+                <td class="left"><%=$_SESSION['currentPageRealisasiTarget']['dataPendapatan']['no_rek4'].' - '.$_SESSION['currentPageRealisasiTarget']['dataPendapatan']['nama_rek4']%></td>                
+            </tr>
+            <tr>				
+                <td class="left"><%=$_SESSION['currentPageRealisasiTarget']['dataPendapatan']['no_rek5'].' - '.$_SESSION['currentPageRealisasiTarget']['dataPendapatan']['nama_rek5']%></td>                
+            </tr>                        
+        </table>        
+        <table class="list">          
+            <tr>				
+                <td class="left" width="250">Target Penerimaan</td>     
+                <td><%=$this->finance->toRupiah($_SESSION['currentPageRealisasiTarget']['dataPendapatan']['target'],false);%></td>
+            </tr>
+            <tr>				
+                <td class="left">Bulan ini (<%=$this->TGL->tanggal('F')%>)</td>     
+                <td><com:TActiveLabel ID="penerimaanBulanINI" /></td>
+            </tr>
+            <tr>				
+                <td class="left">Sampai Dengan Bulan Lalu (<%=$this->TGL->tanggal('F',$_SESSION['ta'].'-'.(date('m')-1).'-01')%>)</td>     
+                <td><com:TActiveLabel ID="penerimaanBulanLalu" /></td>
+            </tr>
+            <tr>				
+                <td class="left">Sampai Dengan Bulan Ini (<%=$this->TGL->tanggal('F')%>)</td>     
+                <td><com:TActiveLabel ID="penerimaanSampaiBulanINI" /></td>
+            </tr>
+            <tr>				
+                <td class="left">Lebih / Kurang pencapaian Target</td>     
+                <td><com:TActiveLabel ID="pencapaiantarget" /></td>
+            </tr>
+            <tr>				
+                <td class="left">% Pencapaian Target</td>     
+                <td><com:TActiveLabel ID="persenpencapaiantarget" /></td>
+            </tr>
+        </table>
+
+		<h3 class="tit">Tambah Realisasi</h3>		
+        <table class="list">            
+            <tr>				
+                <td class="left" width="150">Bulan</td>
+                <td colspan="2" class="left"><com:TActiveDropDownList ID="cmbAddBulan"/>						
+                </td>
+            </tr>            
+            <tr>				
+                <td class="left">Realisasi</td>
+                <td colspan="2" class="left"><com:TActiveTextBox ID="txtAddRealisasi" Columns="15" Attributes.OnKeyUp="formatangka(this)" Text="0" />                    
+                    <com:TRequiredFieldValidator ControlToValidate="txtAddRealisasi" Display="Dynamic" ValidationGroup="addRealisasi" ErrorMessage="Isi Realisasi" />                    
+                </td>
+            </tr>            
+            <tr>
+                <td class="left">&nbsp;</td>
+                <td colspan="2" class="left">
+                    <com:TActiveButton ID="btnSaveData" OnClick="saveData" Text="Save" ValidationGroup="addRealisasi" CssClass="input-submit">
+                        <prop:ClientSide.OnPreDispatch>
+                            $('loadingbar').show();			                                
+                        </prop:ClientSide.OnPreDispatch>
+                        <prop:ClientSide.OnLoading>
+                            $('<%=$this->btnSaveData->ClientId%>').disabled='disabled';									
+                        </prop:ClientSide.OnLoading>
+                        <prop:ClientSide.onComplete>
+                            $('<%=$this->btnSaveData->ClientId%>').disabled='';																								                                
+                            $('loadingbar').hide();
+                        </prop:ClientSide.OnComplete>
+                    </com:TActiveButton>
+                    <com:TActiveLinkButton ID="btnClose" OnClick="closeRealisasi" Text="Keluar" CssClass="input-submit">
+                        <prop:ClientSide.OnPreDispatch>
+                            $('loadingbar').show();			                                
+                        </prop:ClientSide.OnPreDispatch>
+                        <prop:ClientSide.OnLoading>
+                            $('<%=$this->btnClose->ClientId%>').disabled='disabled';									
+                        </prop:ClientSide.OnLoading>
+                        <prop:ClientSide.onComplete>
+                            $('<%=$this->btnClose->ClientId%>').disabled='';																								                                
+                            $('loadingbar').hide();
+                        </prop:ClientSide.OnComplete>
+                    </com:TActiveLinkButton>                    
+                </td>
+            </tr>
+        </table>		
+        <com:TActiveDataGrid ID="GridRealisasi"
+            CssClass="list"
+            DataKeyField="idrealisasi"
+            AutoGenerateColumns="false"
+            ShowFOoter="false" 
+            OnItemCreated="itemCreated"
+            OnEditCommand="editItem"
+            OnUpdateCommand="saveItem"
+            OnCancelCommand="cancelItem"
+            OnDeleteCommand="deleteItem"
+            EmptyTemplate="<p class='msg info'>Belum ada realisasi pendapatan.</p>">
+        >
+            <com:TLiteralColumn            
+                HeaderText="No"            
+                HeaderStyle.Width="30px"
+                DataField="no"
+                HeaderStyle.CssClass="left" 
+                ItemStyle.CssClass="left"
+                />
+            <com:TTemplateColumn            
+                HeaderText="Bulan"
+                HeaderStyle.Width="110px"            
+                HeaderStyle.CssClass="left" 
+                ItemStyle.CssClass="left">
+                <prop:ItemTemplate>
+                    <%#$this->Page->TGL->tanggal('F',$this->Parent->DataItem['tanggal_realisasi'])%>
+                </prop:ItemTemplate>
+            </com:TTemplateColumn>            
+            <com:TActiveBoundColumn
+                ID="RealisasiColumn"
+                ItemStyle.HorizontalAlign="Right"
+                ItemStyle.Wrap="false"          
+                HeaderText="Realisasi"
+                HeaderStyle.Width="60px"
+                DataField="realisasi"            
+                HeaderStyle.CssClass="right"
+                ItemStyle.CssClass="right"
+                /> 
+            <com:TActiveEditCommandColumn
+                HeaderText=""            
+                UpdateText="Save"         
+                HeaderStyle.Width="60px"
+                ItemStyle.CssClass="center"
+                />
+            <com:TActiveButtonColumn
+                ID="DeleteColumn"
+                HeaderText=""
+                HeaderStyle.Width="50px"            
+                Text="Delete"
+                CommandName="delete"
+                ItemStyle.CssClass="center"
+                />    
+        </com:TActiveDataGrid>
+	</com:TPanel>
+	<com:TPanel Visible="<%= $this->getDefaultProcess() %>">		                        
+        <h3 class="tit">Filters & Search</h3>
+        <table class="list">		
+            <thead>
+                <tr>
+                    <td class="left">Filters</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="left">Kelompok :</td>
+                </tr>
+                <tr>
+                    <td class="left"><com:TActiveDropDownList ID="cmbAddKelompok" AutoPostBack="true" OnSelectedIndexChanged="changeRekening">
+                            <prop:ClientSide.OnPreDispatch>
+                                $('loadingbar').show();			                                
+                            </prop:ClientSide.OnPreDispatch>
+                            <prop:ClientSide.OnLoading>
+                                $('<%=$this->cmbAddKelompok->ClientId%>').disabled='disabled';									
+                            </prop:ClientSide.OnLoading>
+                            <prop:ClientSide.onComplete>
+                                $('<%=$this->cmbAddKelompok->ClientId%>').disabled='';																								                                
+                                $('loadingbar').hide();
+                            </prop:ClientSide.OnComplete>
+                        </com:TActiveDropDownList>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="left">Jenis :</td>
+                </tr>
+                <tr>
+                    <td class="left" ><com:TActiveDropDownList ID="cmbAddJenis" AutoPostBack="true" OnSelectedIndexChanged="changeRekening" Enabled="false">
+                            <prop:ClientSide.OnPreDispatch>
+                                $('loadingbar').show();			                                
+                            </prop:ClientSide.OnPreDispatch>
+                            <prop:ClientSide.OnLoading>
+                                $('<%=$this->cmbAddJenis->ClientId%>').disabled='disabled';									
+                            </prop:ClientSide.OnLoading>
+                            <prop:ClientSide.onComplete>
+                                $('<%=$this->cmbAddJenis->ClientId%>').disabled='';																								                                
+                                $('loadingbar').hide();
+                            </prop:ClientSide.OnComplete>
+                        </com:TActiveDropDownList>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="left">Objek :</td>
+                </tr>
+                <tr>
+                    <td class="left"><com:TActiveDropDownList ID="cmbAddObjek" AutoPostBack="true" OnSelectedIndexChanged="changeRekening" Enabled="false">
+                            <prop:ClientSide.OnPreDispatch>
+                                $('loadingbar').show();			                                
+                            </prop:ClientSide.OnPreDispatch>
+                            <prop:ClientSide.OnLoading>
+                                $('<%=$this->cmbAddObjek->ClientId%>').disabled='disabled';									
+                            </prop:ClientSide.OnLoading>
+                            <prop:ClientSide.onComplete>
+                                $('<%=$this->cmbAddObjek->ClientId%>').disabled='';																								                                
+                                $('loadingbar').hide();
+                            </prop:ClientSide.OnComplete>
+                        </com:TActiveDropDownList>
+                    </td>
+                </tr>   
+                <tr>
+                    <td class="left">Rincian :</td>
+                </tr>
+                <tr>
+                    <td class="left"><com:TActiveDropDownList ID="cmbAddRincian" AutoPostBack="true" OnSelectedIndexChanged="changeRekening" Enabled="false">
+                            <prop:ClientSide.OnPreDispatch>
+                                $('loadingbar').show();			                                
+                            </prop:ClientSide.OnPreDispatch>
+                            <prop:ClientSide.OnLoading>
+                                $('<%=$this->cmbAddRincian->ClientId%>').disabled='disabled';									
+                            </prop:ClientSide.OnLoading>
+                            <prop:ClientSide.onComplete>
+                                $('<%=$this->cmbAddRincian->ClientId%>').disabled='';																								                                
+                                $('loadingbar').hide();
+                            </prop:ClientSide.OnComplete>
+                        </com:TActiveDropDownList>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="left">
+                        <com:TActiveButton ID="btnTambahRealisasi" OnClick="addProcess" Text="Tambah Realisasi" ValidationGroup="tambahrealisasi" CssClass="input-submit" Enabled="false">
+                            <prop:ClientSide.OnPreDispatch>
+                                $('loadingbar').show();			                                
+                            </prop:ClientSide.OnPreDispatch>
+                            <prop:ClientSide.OnLoading>
+                                $('<%=$this->btnTambahRealisasi->ClientId%>').disabled='disabled';									
+                            </prop:ClientSide.OnLoading>
+                            <prop:ClientSide.onComplete>
+                                $('<%=$this->btnTambahRealisasi->ClientId%>').disabled='';																								                                
+                                $('loadingbar').hide();
+                            </prop:ClientSide.OnComplete>
+                        </com:TActiveButton>
+                        <com:TActiveLabel ID="errormessage" />
+                        <com:TRequiredFieldValidator InitialValue="none" ControlToValidate="cmbAddRincian" ErrorMessage="Pilih rekening rincian" Display="Dynamic" ValidationGroup="tambahrealisasi" FocusOnError="true" />
+                        
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="list">		
+            <thead>
+                <tr>
+                    <td class="left" colspan="2">Search</td>
+                </tr>
+            </thead>
+            <tbody>                                                              
+                <tr>
+                    <td width="250" class="left">Berdasarkan</td>
+                    <td class="left">
+                        <com:TActiveDropDownList ID="cmbBerdasarkan" AutoPostBack="false">
+                            <com:TListItem Value="kode" Text="Kode Rekening" />
+                            <com:TListItem Value="nama" Text="Nama Rekening" />
+                        </com:TActiveDropDownList>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="left">Kriteria</td>
+                    <td class="left">
+                        <com:TActiveTextBox ID="txtKriteria" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="left"></td>
+                    <td class="left">
+                        <com:TActiveButton ID="btnSearch" OnClick="filterRecord" Text="Search" ValidationGroup="filterForm" CssClass="input-submit">
+                            <prop:ClientSide.OnPreDispatch>
+                                $('loadingbar').show();			                                
+                            </prop:ClientSide.OnPreDispatch>
+                            <prop:ClientSide.OnLoading>
+                                $('<%=$this->btnSearch->ClientId%>').disabled='disabled';									
+                            </prop:ClientSide.OnLoading>
+                            <prop:ClientSide.onComplete>
+                                $('<%=$this->btnSearch->ClientId%>').disabled='';																								                                
+                                $('loadingbar').hide();
+                            </prop:ClientSide.OnComplete>
+                        </com:TActiveButton>
+                        <com:TRequiredFieldValidator ControlToValidate="txtKriteria" ErrorMessage="Nama kriteria harap di isi" Display="Dynamic" ValidationGroup="filterForm" FocusOnError="true" />
+                    </td>
+                </tr>            
+            </tbody>
+        </table>
+        <h3 class="tit">Daftar Realisasi Penerimaan</h3>
+		<com:TActiveRepeater ID="RepeaterS" AllowPaging="true" AllowCustomPaging="true" DataKeyField="no_rek5" PageSize="10">
+			<prop:HeaderTemplate>	
+			<table class="list">					
+                <thead>
+                <tr>
+                    <th width="25" class="left">No</th>
+                    <th width="120">Kode Rekening</th>
+                    <th width="400">Jenis Penerimaan</th>                                        
+                    <th>Bulan</th>
+                    <th>Target</th>
+                    <th>Realisasi</th>                    
+                </tr>
+                </thead>
+                <tbody>
+			</prop:HeaderTemplate>		
+			<prop:ItemTemplate>
+                <tr>
+                    <td class="center"><%#$this->Data['no']%></td>
+                    <td class="center"><%#$this->Data['no_rek5']%></td>	
+                    <td class="left"><%#$this->Data['nama_rek5']%></td>                    
+                    <td class="center"><%#$this->Page->TGL->tanggal('F',$this->Data['tanggal_realisasi'])%></td>                                        
+                    <td class="right"><%#$this->Page->finance->toRupiah($this->Data['target'])%></td>                    
+                    <td class="right"><%#$this->Page->finance->toRupiah($this->Data['realisasi'])%></td>                      
+                </tr>
+			</prop:ItemTemplate>	
+			<prop:AlternatingItemTemplate>
+				 <tr>
+                    <td class="center"><%#$this->Data['no']%></td>
+                    <td class="center"><%#$this->Data['no_rek5']%></td>	
+                    <td class="left"><%#$this->Data['nama_rek5']%></td>                    
+                    <td class="center"><%#$this->Page->TGL->tanggal('F',$this->Data['tanggal_realisasi'])%></td>                                        
+                    <td class="right"><%#$this->Page->finance->toRupiah($this->Data['target'])%></td>                    
+                    <td class="right"><%#$this->Page->finance->toRupiah($this->Data['realisasi'])%></td>                                                              
+                </tr>
+			</prop:AlternatingItemTemplate>	
+            <prop:FooterTemplate>                
+                <tbody>
+                </table>                
+            </prop:FooterTemplate>	
+             <prop:EmptyTemplate>
+                <p class="msg info">
+                    Belum ada realisasi pendapatan.
+                </p>                
+            </prop:EmptyTemplate>
+		</com:TActiveRepeater>	
+        <%include Application.Paging%> 
+	</com:TPanel>
+</com:TContent>

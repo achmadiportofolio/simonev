@@ -1,0 +1,5 @@
+<%@ Title="Data Master" %>
+<com:TContent ID="leftcontent">
+    <%include Application.pages.d.dmaster.LeftMenu%>
+</com:TContent>
+<com:TContent ID="header">Data Master</com:TContent>

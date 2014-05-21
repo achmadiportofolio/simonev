@@ -1,0 +1,97 @@
+<%@ Title="Data Belanja" %>
+<com:TContent ID="leftcontent">
+    <%include Application.pages.s.belanja.LeftMenu%>
+</com:TContent>
+<com:TContent ID="contenttoolbar">
+    <%include Application.layouts.Toolbars%>
+</com:TContent>
+<com:TContent ID="header">
+    Summary Data Kegiatan Tahun Anggaran <com:TActiveLabel Text="<%=$this->session['ta']%>" />    
+</com:TContent>
+<com:TContent ID="content">
+    <com:TActivePanel Visible="<%= $this->getDefaultProcess() %>">
+        
+        <com:TActiveRepeater ID="RepeaterS" DataKeyField="idprogram">
+			<prop:HeaderTemplate>	
+                <table class="list">		
+                    <thead>                          
+                        <tr>
+                            <th width="25" rowspan="2" class="center">No</th>
+                            <th width="100" rowspan="2" class="center">Kode Program</th>
+                            <th width="400" rowspan="2" class="center">Nama Program</th>
+                            <th colspan="4" class="center">Bulan Realisasi s.d bulan <%#$this->page->TGL->tanggal('F',date('Y-').$this->page->session['bulanrealisasi'].date('-d'))%></th>                                                        
+                        </tr>                       
+                        <tr>
+                            <td widht="40" class="center">Total Kegiatan</td>
+                            <th width="160" class="center">Total Pagu Anggaran</th>
+                            <th width="160" class="center">Total Realisasi</th>				
+                            <th width="160" class="center">Sisa Anggaran</th>                            
+                        </tr>
+                    </thead>
+                </prop:HeaderTemplate>	
+                <prop:ItemTemplate>
+                    <tr>
+                        <td class="center"><%#$this->Data['no']%></td>
+                        <td class="center"><%#$this->Data['kode_program']%></td>	
+                        <td class="left">
+                            <com:TActiveLinkButton ID="btnDetailProgram" Text="<%#$this->Data['nama_program']%>" OnClick="page.detailsProgram">
+                                <prop:ClientSide.OnPreDispatch>
+                                    $('loadingbar').show();			                                
+                                </prop:ClientSide.OnPreDispatch>
+                                <prop:ClientSide.OnLoading>
+                                    $('<%=$this->btnDetailProgram->ClientId%>').disabled='disabled';									
+                                </prop:ClientSide.OnLoading>
+                                <prop:ClientSide.onComplete>
+                                    $('<%=$this->btnDetailProgram->ClientId%>').disabled='';																								                                
+                                    $('loadingbar').hide();
+                                </prop:ClientSide.OnComplete>
+                            </com:TActiveLinkButton>
+                        </td>
+                        <td class="center"><%#$this->Data['totalKegiatan']%>
+                        <td class="right"><%#$this->Data['totalPagu']%></td>
+                        <td class="right"><%#$this->Data['totalRealisasi']%></td>                        
+                        <td class="right"><%#$this->Data['sisa_anggaran']%></td>                        
+                    </tr>
+                </prop:ItemTemplate>	
+                <prop:AlternatingItemTemplate>
+                    <tr>
+                        <td class="center"><%#$this->Data['no']%></td>
+                        <td class="center"><%#$this->Data['kode_program']%></td>	
+                        <td class="left">
+                            <com:TActiveLinkButton ID="btnDetailProgram" Text="<%#$this->Data['nama_program']%>" OnClick="page.detailsProgram">
+                                <prop:ClientSide.OnPreDispatch>
+                                    $('loadingbar').show();			                                
+                                </prop:ClientSide.OnPreDispatch>
+                                <prop:ClientSide.OnLoading>
+                                    $('<%=$this->btnDetailProgram->ClientId%>').disabled='disabled';									
+                                </prop:ClientSide.OnLoading>
+                                <prop:ClientSide.onComplete>
+                                    $('<%=$this->btnDetailProgram->ClientId%>').disabled='';																								                                
+                                    $('loadingbar').hide();
+                                </prop:ClientSide.OnComplete>
+                            </com:TActiveLinkButton>
+                        </td>
+                        <td class="center"><%#$this->Data['totalKegiatan']%>
+                        <td class="right"><%#$this->Data['totalPagu']%></td>                        
+                        <td class="right"><%#$this->Data['totalRealisasi']%></td>                        
+                        <td class="right"><%#$this->Data['sisa_anggaran']%></td>                        
+                    </tr>
+                </prop:AlternatingItemTemplate>	
+                <prop:FooterTemplate>
+                    <tr style="font-weight:bold;">
+                        <td colspan="3" class="right">Jumlah</td>
+                        <td class="center"><%=$this->Page->totalAllKegiatan%></td>
+                        <td class="right"><%=$this->page->finance->toRupiah($this->Page->totalAllPaguAnggaran)%></td>
+                        <td class="right"><%=$this->page->finance->toRupiah($this->Page->totalAllRealisasi)%></td>
+                        <td class="right"><%=$this->page->finance->toRupiah($this->Page->totalAllPaguAnggaran-$this->Page->totalAllRealisasi)%></td>
+                    </tr>
+                    </table>
+                </prop:FooterTemplate>	
+                <prop:EmptyTemplate>
+                    <p class="msg info">
+                        Belum ada Program di Tahun Anggaran <%#$this->Page->session['ta']%>.
+                    </p>                
+                </prop:EmptyTemplate>
+		</com:TActiveRepeater>
+    </com:TActivePanel>
+</com:TContent>

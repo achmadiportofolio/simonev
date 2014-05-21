@@ -1,0 +1,5 @@
+<%@ Title="Dashboard" %>
+<com:TContent ID="leftcontent">
+    <%include Application.pages.m.dashboard.LeftMenu%>
+</com:TContent>
+<com:TContent ID="header">Dashboard</com:TContent>

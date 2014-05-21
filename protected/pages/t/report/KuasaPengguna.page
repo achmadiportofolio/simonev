@@ -1,0 +1,87 @@
+<%@ Title="Report::Pejabat::Kuasa Pengguna" %>
+<com:TContent ID="leftcontent">
+    <%include Application.pages.t.report.LeftMenu%>
+</com:TContent>	
+<com:TContent ID="contenttoolbar">
+    <%include Application.layouts.Toolbars%>
+</com:TContent>
+<com:TContent ID="header"><com:TLiteral ID="literalHeader" />(Tahun Anggaran <com:TActiveLabel Text="<%=$this->session['ta']%>" />)</com:TContent>
+<com:TContent ID="content">	
+    <com:TPanel Visible="<%= $this->getViewProcess(false) %>">
+        <div class="controlbox">         
+            <%include Application.pages.t.report.ToolbarControls%>
+            <com:TActiveButton ID="btnPrint" Text="Print"  OnClick="Page.showPrintOutModal" ClientSide.PostState="False" CssClass="input-submit">
+                <prop:ClientSide.OnPreDispatch>
+                    $('loadingbar').show();			                                
+                </prop:ClientSide.OnPreDispatch>
+                <prop:ClientSide.OnLoading>
+                    $('<%=$this->btnPrint->ClientId%>').disabled='disabled';									
+                </prop:ClientSide.OnLoading>
+                <prop:ClientSide.onComplete>
+                    $('<%=$this->btnPrint->ClientId%>').disabled='';																								                                
+                    $('loadingbar').hide();
+                </prop:ClientSide.OnComplete>
+            </com:TActiveButton>
+            <com:TActiveButton ID="btnClose" Text="Close" OnClick="close" ClientSide.PostState="False" CssClass="input-submit">                
+                <prop:ClientSide.OnLoading>
+                    $('<%=$this->btnClose->ClientId%>').disabled='disabled';									
+                </prop:ClientSide.OnLoading>
+                <prop:ClientSide.onComplete>
+                    $('<%=$this->btnClose->ClientId%>').disabled='';																								                                                    
+                </prop:ClientSide.OnComplete>
+            </com:TActiveButton>
+            <com:TActiveHyperLink ID="linkExcel" />
+        </div>
+        <br />
+        <com:TActiveLabel ID="contentReport" />		
+        <com:TActiveLabel ID="footerReport" />
+    </com:TPanel>
+	<com:TPanel Visible="<%= $this->getDefaultProcess() %>">		
+		<com:TActiveRepeater ID="RepeaterS" DataKeyField="nip_kuasa_pengguna">
+            <prop:HeaderTemplate>			
+                <table cellpadding="0" class="list">	
+                    <thead>
+                    <tr>
+                        <th width="15" class="left">No</th>                                                    
+                        <th width="170">NIP</th>
+                        <th>Nama</th>
+                        <th>Jumlah Kegiatan</th>
+                        <th>Total Nilai <br />Pagu</th>
+                        <th width="160">Actions</th>							
+                    </tr>								
+                    </thead>
+                    <tbody>
+            </prop:HeaderTemplate>
+            <prop:ItemTemplate>
+                <tr>				
+                    <td class="left"><%#$this->DataItem['no']%></td>                                        											                   
+                    <td class="center"><%#$this->page->nipFormat($this->DataItem['nip_kuasa_pengguna'])%></td>
+                    <td class="left"><%#$this->DataItem['nama_kuasa_pengguna']%></td>
+                    <td class="left"><%#$this->DataItem['jumlah_kegiatan']%></td>
+                    <td class="left"><%#$this->DataItem['nilai_pagu']%></td>
+                    <td class="center" width="90"><com:TActiveButton CssClass="input-submit"  Text="Details" OnClick="Page.viewRecord" ClientSide.PostState="false" Enabled="<%#$this->DataItem['jumlah_kegiatan']>0?true:false%>" /></td>
+                </tr>
+            </prop:ItemTemplate>				
+            <prop:AlternatingItemTemplate>
+                 <tr>				
+                    <td class="left"><%#$this->DataItem['no']%></td>                                        											                   
+                    <td class="center"><%#$this->page->nipFormat($this->DataItem['nip_kuasa_pengguna'])%></td>
+                    <td class="left"><%#$this->DataItem['nama_kuasa_pengguna']%></td>
+                    <td class="left"><%#$this->DataItem['jumlah_kegiatan']%></td>
+                    <td class="left"><%#$this->DataItem['nilai_pagu']%></td>
+                    <td class="center" width="90"><com:TActiveButton CssClass="input-submit"  Text="Details" OnClick="Page.viewRecord" ClientSide.PostState="false" Enabled="<%#$this->DataItem['jumlah_kegiatan']>0?true:false%>" /></td>
+                </tr>
+            </prop:AlternatingItemTemplate>
+            <prop:FooterTemplate>               
+                </tbody>
+                </table>
+            </prop:FooterTemplate>	
+            <prop:EmptyTemplate>
+                <p class="msg info">
+                    no record.
+                </p>                
+            </prop:EmptyTemplate>
+        </com:TActiveRepeater>
+        <%include Application.Paging%>	
+	</com:TPanel>	
+</com:TContent>

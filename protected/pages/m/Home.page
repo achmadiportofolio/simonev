@@ -1,0 +1,47 @@
+<%@ Title="Dashboard" %>
+<com:TContent ID="leftcontent">
+    <%include Application.pages.m.dashboard.LeftMenu%>
+</com:TContent>
+<com:TContent ID="header">Dashboard Tahun Anggaran <com:TActiveLabel Text="<%=$this->session['ta']%>" /></com:TContent>
+<com:TContent ID="contenttoolbar">
+    <%include Application.layouts.Toolbars%>
+</com:TContent>
+<com:TContent ID="content">	
+	<com:TActivePanel Visible="<%= $this->getDefaultProcess() %>">	
+        <table class="list">
+            <tbody>
+                <tr>
+                    <td class="left" width="250">Jumlah Kegiatan Terealisasi Seluruhnya</td>
+                    <td class="left"><com:TActiveLabel Text="<%=$this->dataKegiatan['terrealisasi']%>" /></td>
+                </tr>
+                <tr>
+                    <td class="left" width="150">Jumlah Kegiatan Belum Terealisasi Seluruhnya</td>
+                    <td class="left"><com:TActiveLabel Text="<%=$this->dataKegiatan['belumterealisasi']%>" /></td>
+                </tr>
+                <tr>
+                    <td class="left" width="150">Total Kegiatan</td>
+                    <td class="left"><com:TActiveLabel Text="<%=$this->dataKegiatan['totalkegiatan']%>" /></td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="list">
+            <tbody>
+                <tr>
+                    <td class="left" width="250">Total Pagu Anggaran</td>
+                    <td class="left"><com:TActiveLabel Text="<%=$this->dataKegiatan['totalpaguanggaran']%>" /></td>
+                </tr>
+                <tr>
+                    <td class="left" width="150">Total Terealisasi</td>
+                    <td class="left"><com:TActiveLabel Text="<%=$this->dataKegiatan['totalrealisasi']%>" /></td>
+                </tr>            
+                <tr>
+                    <td class="left" width="150">Persen Realisasi</td>
+                    <td class="left"><com:TActiveLabel Text="<%=$this->dataKegiatan['persenrealisasi']%>" /></td>
+                </tr>
+            </tbody>
+        </table>
+        <p style="text-align:center">
+            <com:TActiveImage ImageUrl="<%=$this->Service->constructUrl('m.DashboardRealisasiChart')%>" />
+        </p>        
+    </com:TActivePanel>
+</com:TContent>

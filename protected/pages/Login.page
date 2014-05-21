@@ -1,0 +1,48 @@
+<%@ Title="Sistem Informasi Pelaporan Pembangunan - Login" %>
+<com:TContent ID="logincontent">
+<div class="main">
+	<div id="tray" class="box">
+		<p class="f-left box">	
+			Badan Perencanaan dan Pembangunan Daerah Kabupaten Bintan: <strong>Sistem Informasi Pelaporan Pembangunan</strong>
+		</p>		
+	</div>
+    <hr class="noscreen" />
+    <div id="cols" class="box">
+        <div id="content" class="box">
+            <h1>Login User</h1>
+            <table width="100%" class="list">
+                <tr>
+                    <td width="150" class="left">Username</td>
+                    <td class="left"><com:TActiveTextBox ID="txtUsername" Columns="15" Attributes.OnClick="clearMessage('<%=$this->errormessage->ClientId%>')" />
+                        <com:TRequiredFieldValidator ValidationGroup="entitaslogin" Display="Dynamic" ControlToValidate="txtUsername" ErrorMessage="<p class='msg error'>Inputkan username.</p>"/>	
+                    </td>
+                </tr>
+                <tr>
+                    <td class="left">Password</td>
+                    <td class="left"><com:TActiveTextBox ID="txtPassword" TextMode="Password" Columns="15" Attributes.OnClick="clearMessage('<%=$this->errormessage->ClientId%>')" />
+                        <com:TRequiredFieldValidator ValidationGroup="entitaslogin" Display="Dynamic" ControlToValidate="txtPassword" ErrorMessage="<p class='msg error'>Inputkan password</p>"/>	
+                    </td>
+                </tr>
+                <tr>
+                    <td class="left">&nbsp;</td>
+                    <td class="left">
+                        <com:TActiveButton ID="btnLogin" Text="Login" CssClass="input-submit" OnClick="doLogin" ValidationGroup="entitaslogin" Attributes.OnClick="clearMessage('<%=$this->errormessage->ClientId%>')">     
+                            <prop:ClientSide.OnPreDispatch>
+                                $('loadinglogin').show();
+                            </prop:ClientSide.OnPreDispatch>
+                            <prop:ClientSide.OnLoading>									
+                                $('<%=$this->btnLogin->ClientId%>').disabled='disabled';														
+                            </prop:ClientSide.OnLoading>
+                            <prop:ClientSide.onComplete>																												                        
+                                $('<%=$this->btnLogin->ClientId%>').disabled='';														                                    
+                                $('loadinglogin').hide();
+                            </prop:ClientSide.OnComplete>
+                        </com:TActiveButton><com:TActiveLabel ID="errormessage" />
+                        <img id="loadinglogin" src="<%=$this->Page->Theme->baseUrl%>/design/ajax-loader-1.gif" style="display:none;" />
+                    </td>
+                </tr>
+            </table>             
+        </div>
+    </div>
+</div>    
+</com:TContent>
