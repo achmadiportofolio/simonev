@@ -72,21 +72,7 @@ class formB extends MainPageReports {
 			return $r[1]['total'];
 		else
 			return 0;
-	}
-	
-	/**
-	*
-	* jumlah realisasi satu proyek, tahun, bulan penggunaan
-	*/
-	private function getJumlahFisik ($idproyek,$no_bulan,$tahun) {
-		$str = "SELECT COUNT(realisasi) AS total FROM v_laporan_a WHERE bulan_penggunaan<='$no_bulan' AND tahun_penggunaan='$tahun'  AND idproyek='$idproyek'";				
-		$this->DB->setFieldTable (array('total'));
-		$r=$this->DB->getRecord($str);
-		if (isset($r[1]))
-			return $r[1]['total'];
-		else
-			return 0;
-	} 
+	}	
 	public function printContent () {
 		$idunit=$this->idunit;
 		$ta=$this->session['ta'];
@@ -226,11 +212,12 @@ class formB extends MainPageReports {
                             $sisa_anggaran=0;
                             $persen_sisa_anggaran='0.00';
                             if ($realisasi[1]['total'] > 0 ){
+                                $str = "SELECT COUNT(iduraian) AS jumlahuraian FROM uraian WHERE idproyek=$idproyek";
+                                $this->DB->setFieldTable (array('jumlahuraian'));
+                                $uraian=$this->DB->getRecord($str);
                                 //fisik
                                 $totalFisikSatuProyek=$this->getTotalFisik($idproyek,$no_bulan,$ta);
-//                                $jumlahRealisasiFisikSatuProyek=$this->getJumlahFisik ($idproyek,$no_bulan,$ta);    				
-//                                $persen_fisik=number_format(($totalFisikSatuProyek/$jumlahRealisasiFisikSatuProyek),2);
-                                $persen_fisik=$totalFisikSatuProyek;
+                                $persen_fisik=number_format($totalFisikSatuProyek/$uraian[1]['jumlahuraian'],2);
                                 $totalPersenFisik+=$persen_fisik;												
                                 $persenFisikPerSPPD=number_format(($persen_fisik/100)*$persen_bobot,2);
                                 $totalPersenFisikPerSPPD+=$persenFisikPerSPPD;

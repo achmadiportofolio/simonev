@@ -452,11 +452,11 @@ class Logic_Report extends Logic_Kegiatan {
                                 $r=$this->db->getRecord($str);
                                 $totalFisikSatuProyek=$r[1]['total'];
                                 
-//                                $str = "SELECT COUNT(realisasi) AS total FROM v_laporan_a WHERE bulan_penggunaan<='$bulan' AND tahun_penggunaan='$tahun'  AND idproyek='$idproyek'";				                                
-//                                $r=$this->db->getRecord($str);
-//                                $jumlahRealisasiFisikSatuProyek=$r[1]['total'];    				
-//                                $persen_fisik=number_format(($totalFisikSatuProyek/$jumlahRealisasiFisikSatuProyek),2);
-                                $persen_fisik=$totalFisikSatuProyek;
+                                $str = "SELECT COUNT(iduraian) AS jumlahuraian FROM uraian WHERE idproyek=$idproyek";
+                                $this->db->setFieldTable (array('jumlahuraian'));
+                                $uraian=$this->db->getRecord($str);
+
+                                $persen_fisik=number_format($totalFisikSatuProyek/$uraian[1]['jumlahuraian'],2);;
                                 $totalPersenFisik+=$persen_fisik;												
                                 $persenFisikPerSPPD=number_format(($persen_fisik/100)*$persen_bobot,2);
                                 $totalPersenFisikPerSPPD+=$persenFisikPerSPPD;

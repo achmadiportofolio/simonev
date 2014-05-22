@@ -921,7 +921,7 @@ class formA extends MainPageReports {
                                                 $persen_realisasi_rek3=number_format(($totalPaguDana_Rek3['totaltarget']/$totalPaguDana_Rek3['totalpagu'])*100,2);
                                                 $persen_tertimbang_rek3=number_format(($persen_realisasi_rek3*$persen_bobot_rek3)/100,2);
                                                 $total_persen_tertimbang_rek3+=$persen_tertimbang_rek3;                                                                                
-                                                $persen_rata2_fisik_rek3=number_format(($totalPaguDana_Rek3['totalfisik']/$persen_bobot_rek3)*100,2);                                                
+                                                $persen_rata2_fisik_rek3=$totalPaguDana_Rek3['totalfisik'];                                                
                                                 $total_persen_rata2_fisik_rek3+=$persen_rata2_fisik_rek3;
                                                 $persen_tertimbang_fisik_rek3=number_format(($persen_rata2_fisik_rek3*$persen_bobot_rek3)/100,2);
                                                 $total_persen_fisik_tertimbang_rek3+=$persen_tertimbang_fisik_rek3;
@@ -958,7 +958,7 @@ class formA extends MainPageReports {
                                                         $rp_total_realisasi_rek4=$this->finance->toRupiah($totalPaguDana_Rek4['totalrealisasi']);
                                                         $persen_realisasi_rek4=number_format(($totalPaguDana_Rek4['totaltarget']/$totalPaguDana_Rek4['totalpagu'])*100,2);
                                                         $persen_tertimbang_rek4=number_format(($persen_realisasi_rek4*$persen_bobot_rek4)/100,2);
-                                                        $persen_rata2_fisik_rek4=number_format(($totalPaguDana_Rek4['totalfisik']/$persen_bobot_rek4)*100,2);                                                
+                                                        $persen_rata2_fisik_rek4=$totalPaguDana_Rek4['totalfisik'];                                                
                                                         $persen_tertimbang_fisik_rek4=number_format(($persen_rata2_fisik_rek4*$persen_bobot_rek4)/100,2);
                                                         $dalamDpa_rek4=$this->finance->toRupiah($totalPaguDana_Rek4['totalpagu']-$totalPaguDana_Rek4['totaltarget']);                                                
                                                         $dalamKas_rek4=$this->finance->toRupiah($totalPaguDana_Rek4['totaltarget']-$totalPaguDana_Rek4['totalrealisasi']);
@@ -984,7 +984,7 @@ class formA extends MainPageReports {
                                                         $row+=1;
                                                         foreach ($tingkat_5 as $k5=>$v5) {
                                                             if (ereg ($k4,$k5)) {
-                                                                $jumlahrek5+=1;
+                                                                $totalUraian+=1;                                                                
                                                                 $totalPaguDana_Rek5=$this->calculateEachLevel($dataproyek,$k5,'no_rek5');													
                                                                 $rp_total_pagu_dana_rek5=$this->finance->toRupiah($totalPaguDana_Rek5['totalpagu']);       
                                                                 $iduraian=$dataproyek[$k5]['iduraian'];
@@ -996,7 +996,7 @@ class formA extends MainPageReports {
                                                                 $rp_total_realisasi_rek5=$this->finance->toRupiah($totalPaguDana_Rek5['totalrealisasi']);
                                                                 $persen_realisasi_rek5=number_format(($totalPaguDana_Rek5['totaltarget']/$totalPaguDana_Rek5['totalpagu'])*100,2);
                                                                 $persen_tertimbang_rek5=number_format(($persen_realisasi_rek5*$persen_bobot_rek5)/100,2);
-                                                                $persen_rata2_fisik_rek5=number_format(($totalPaguDana_Rek5['totalfisik']/$persen_bobot_rek5)*100,2);                                                
+                                                                $persen_rata2_fisik_rek5=$totalPaguDana_Rek5['totalfisik'];                                                
                                                                 $persen_tertimbang_fisik_rek5=number_format(($persen_rata2_fisik_rek5*$persen_bobot_rek5)/100,2);
                                                                 $dalamDpa_rek5=$this->finance->toRupiah($totalPaguDana_Rek5['totalpagu']-$totalPaguDana_Rek5['totaltarget']);                                                
                                                                 $dalamKas_rek5=$this->finance->toRupiah($totalPaguDana_Rek5['totaltarget']-$totalPaguDana_Rek5['totalrealisasi']);
@@ -1023,12 +1023,13 @@ class formA extends MainPageReports {
                                                                 $nilaiuraian=$dataproyek[$k5]['nilai']; 
                                                                 $target=$dataproyek[$k5]['target'];                                                                 
                                                                 $realisasi=$dataproyek[$k5]['realisasi'];                                                                                                                        
+                                                                $fisik=$dataproyek[$k5]['fisik'];
                                                                 $volume=$dataproyek[$k5]['volume'];
                                                                 $persen_bobot=number_format(($nilaiuraian/$totalPaguDana)*100,2);                                                                
                                                                 $persen_target=number_format(($target/$nilaiuraian)*100,2);   
                                                                 $persen_rata2_realisasi=number_format(($realisasi/$nilaiuraian)*100,2);
                                                                 $persen_tertimbang_realisasi=number_format(($persen_rata2_realisasi*$persen_bobot)/100,2);                                                                
-                                                                $persen_rata2_fisik=number_format(($persen_tertimbang_realisasi/$persen_bobot)*100,2);                                                                
+                                                                $persen_rata2_fisik=$fisik;                                                                
                                                                 $persen_tertimbang_fisik=number_format(($persen_rata2_fisik*$persen_bobot)/100,2);
                                                                 $dalamDpa=$nilaiuraian-$target;                                                                
                                                                 $dalamKas=$target-$realisasi;                                                                
@@ -1060,17 +1061,18 @@ class formA extends MainPageReports {
                                                                     $child=$dataproyek[$k5]['child'];                    
                                                                     foreach ($child as $n) {
                                                                         $iduraian=$n['iduraian'];
-                                                                        $jumlahrek5+=1;
+                                                                        $totalUraian+=1;
                                                                         $nama_uraian=$n['nama_uraian'];
                                                                         $nilaiuraian=$n['nilai']; 
-                                                                        $target=$n['target'];                                                                         
+                                                                        $target=$n['target'];                 
+                                                                        $fisik=$n['fisik'];                 
                                                                         $realisasi=$n['realisasi'];                                                                            
                                                                         $volume=$n['volume'];
                                                                         $persen_bobot=number_format(($nilaiuraian/$totalPaguDana)*100,2);                                                                        
                                                                         $persen_target=number_format(($target/$nilaiuraian)*100,2);   
                                                                         $persen_rata2_realisasi=number_format(($realisasi/$nilaiuraian)*100,2);
                                                                         $persen_tertimbang_realisasi=number_format(($persen_rata2_realisasi*$persen_bobot)/100,2);                                                                        
-                                                                        $persen_rata2_fisik=number_format(($persen_tertimbang_realisasi/$persen_bobot)*100,2);                                                                        
+                                                                        $persen_rata2_fisik=$fisik;                                                                        
                                                                         $persen_tertimbang_fisik=number_format(($persen_rata2_fisik*$persen_bobot)/100,2);
                                                                         $dalamDpa=$nilaiuraian-$target;                                                                        
                                                                         $dalamKas=$target-$realisasi;                                                                        
@@ -1155,7 +1157,7 @@ class formA extends MainPageReports {
                 $total_persen_rata2_realisasi=number_format(($totalRealisasi_rek3/$totalPaguDana)*100,2);
                 $this->report->rpt->getActiveSheet()->setCellValue("N$row",$total_persen_rata2_realisasi);
                 $this->report->rpt->getActiveSheet()->setCellValue("O$row",$total_persen_tertimbang_rek3);
-                $total_persen_rata2_fisik_rek3=number_format($total_persen_rata2_fisik_rek3/$jumlahrek3,2);
+                $total_persen_rata2_fisik_rek3=number_format($total_persen_rata2_fisik_rek3/$totalUraian,2);
                 $this->report->rpt->getActiveSheet()->setCellValue("P$row",$total_persen_rata2_fisik_rek3);                
                 $this->report->rpt->getActiveSheet()->setCellValue("Q$row",$total_persen_fisik_tertimbang_rek3);
                 $this->report->rpt->getActiveSheet()->setCellValueExplicit("R$row",$rp_total_dalam_dpa,PHPExcel_Cell_DataType::TYPE_STRING);
