@@ -8,8 +8,11 @@
 <com:TContent ID="contenttoolbar">
     <%include Application.layouts.Toolbars%>
 </com:TContent>
-<com:TContent ID="content">	    	
-	<com:TPanel Visible="<%= $this->getDefaultProcess() %>">        				
+<com:TContent ID="content">	   
+	<com:TPanel Visible="<%= $this->getDefaultProcess() %>">
+        <div class="controlbox">
+            <p id="btn-create" class="box"><com:TLinkButton Text="<span>Tambah Kegiatan</span>" OnClick="addProcess" ID="add" CausesValidation="false" /></p>
+        </div>					
         <h3 class="tit">Filters & Search</h3>
         <table class="list">		
             <thead>
@@ -114,7 +117,7 @@
                             <th width="140" class="center">Pagu Dana <br />(Total PAGU pada Uraian)</th>
                             <th width="130" class="center">SP2D <br /> s.d bulan (<%#$this->page->TGL->tanggal('F',date('Y-').$this->page->session['bulanrealisasi'].date('-d'))%>)</th>
                             <th width="140" class="center">Realisasi <br /> s.d bulan (<%#$this->page->TGL->tanggal('F',date('Y-').$this->page->session['bulanrealisasi'].date('-d'))%>)</th>				
-                            <th width="100" class="center">Capaian (%) <br />s.d bulan (<%#$this->page->TGL->tanggal('F',date('Y-').$this->page->session['bulanrealisasi'].date('-d'))%>)</th>
+                            <th width="100" class="center">Capaian (%) <br />pada bulan (<%#$this->page->TGL->tanggal('F',date('Y-').$this->page->session['bulanrealisasi'].date('-d'))%>)</th>
                         </tr>
                     </thead>
             </prop:HeaderTemplate>	
@@ -130,7 +133,7 @@
                         <td class="right"><%#$this->Data['totalPagu']%></td>
                         <td class="right"><%#$this->Data['totalTarget']%></td>
                         <td class="right"><%#$this->Data['totalRealisasi']%></td>
-                        <td class="center" style="<%#$this->DataItem['style']%>"><%#$this->Data['capaian']%></td>                       
+                        <td class="center" style="<%#$this->DataItem['style']%>"><%#$this->Data['capaian']%></td>                        
                     </tr>
             </prop:ItemTemplate>	
             <prop:AlternatingItemTemplate>
@@ -145,7 +148,7 @@
                         <td class="right"><%#$this->Data['totalPagu']%></td>
                         <td class="right"><%#$this->Data['totalTarget']%></td>
                         <td class="right"><%#$this->Data['totalRealisasi']%></td>
-                        <td class="center" style="<%#$this->DataItem['style']%>"><%#$this->Data['capaian']%></td>                        
+                        <td class="center" style="<%#$this->DataItem['style']%>"><%#$this->Data['capaian']%></td>                       
                     </tr>
             </prop:AlternatingItemTemplate>	
             <prop:FooterTemplate>

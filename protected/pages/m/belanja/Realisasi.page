@@ -1,0 +1,206 @@
+<%@ Title="Data Belanja - Realisasi" %>
+<com:TContent ID="leftcontent">
+    <%include Application.pages.m.belanja.LeftMenu%>
+</com:TContent>
+<com:TContent ID="header">Realisasi Anggaran</com:TContent>
+<com:TContent ID="content">	    
+    <com:TActiveHiddenField ID="hiddennilaitarget" />
+    <com:TActiveHiddenField ID="hiddennilairealisasi" />
+    <com:TActiveHiddenField ID="hiddendpa" />
+    <com:TActiveHiddenField ID="hiddenkas" />    
+    <com:TPanel Visible="<%= $this->getViewProcess(false) %>">
+        <p class="msg warning">
+            ID Uraian tidak dikenali.
+        </p>
+    </com:TPanel>		
+	<com:TPanel Visible="<%= $this->getDefaultProcess() %>">
+        <com:THyperLink ID="uraianAnchor2" Text="Kembali ke Uraian"/>
+        <%include Application.pages.m.belanja.DataUraian%>        
+        <com:TTabPanel ID="RelasiTabPanel" CssClass="tab-panel2" TabCssClass="tab-normal2" ActiveTabCssClass="tab-active2" ViewCssClass="tab-view2">
+            <com:TTabView Caption="Realisasi">
+                <p style="text-align:right">
+                    <com:TActiveCheckBox ID="chkrealisasi" OnCheckedChanged="panelViewChanged" Checked="<%=$_SESSION['currentPageRealisasi']['viewindex']==0?true:false%>">
+                        <prop:ClientSide.OnLoading>
+                            $('<%=$this->chkrealisasi->ClientId%>').disabled='disabled';									
+                        </prop:ClientSide.OnLoading>
+                        <prop:ClientSide.onComplete>
+                            $('<%=$this->chkrealisasi->ClientId%>').disabled='';																								                                                            
+                        </prop:ClientSide.OnComplete>
+                    </com:TActiveCheckBox>                    
+                </p>
+                <com:TActiveRepeater ID="RepeaterS" DataKeyField="idpenggunaan">
+                    <prop:HeaderTemplate>	
+                    <table class="list">		
+                        <thead>
+                            <tr>
+                                <th width="25" rowspan="2" class="left">No</th>
+                                <th width="120" rowspan="2">Bulan</th>
+                                <th width="100" rowspan="2">Tahun</th>
+                                <th width="150" rowspan="2">Pagu Anggaran</th>
+                                <th width="150" rowspan="2">Target</th>				
+                                <th width="150" rowspan="2">Realisasi / SP2D</th>								
+                                <th width="150" rowspan="2">Fisik</th>
+                                <th width="150" colspan="2">Sisa</th>                                
+                            </tr>
+                            <tr align="center" bgcolor="silver">				
+                                <th width="160">DPA</th>
+                                <th width="160">KAS</th>				
+                            </tr>
+                        </thead>
+                        <tbody>
+                    </prop:HeaderTemplate>
+                    <prop:ItemTemplate>
+                        <tr>
+                            <td class="left"><%#$this->Data['no']%></td>
+                            <td class="left"><%#$this->Data['bulan']%></td>	
+                            <td class="center"><%#$this->Data['tahun']%></td>
+                            <td class="right"><%#$this->Data['nilai']%></td>
+                            <td class="right"><%#$this->Data['target']%></td>
+                            <td class="right"><%#$this->Data['realisasi']%></td>
+                            <td class="center"><%#$this->Data['fisik']%></td>
+                            <td class="right"><%#$this->Data['dpa']%></td>
+                            <td class="right"><%#$this->Data['kas']%></td>                            
+                        </tr>
+                    </prop:ItemTemplate>	
+                    <prop:AlternatingItemTemplate>
+                        <tr>
+                            <td class="left"><%#$this->Data['no']%></td>
+                            <td class="left"><%#$this->Data['bulan']%></td>	
+                            <td class="center"><%#$this->Data['tahun']%></td>
+                            <td class="right"><%#$this->Data['nilai']%></td>
+                            <td class="right"><%#$this->Data['target']%></td>
+                            <td class="right"><%#$this->Data['realisasi']%></td>
+                            <td class="center"><%#$this->Data['fisik']%></td>
+                            <td class="right"><%#$this->Data['dpa']%></td>
+                            <td class="right"><%#$this->Data['kas']%></td>                            
+                        </tr>
+                    </prop:AlternatingItemTemplate>	            
+                    <prop:FooterTemplate>
+                        <tbody>
+                        </table>
+                    </prop:FooterTemplate>	
+                     <prop:EmptyTemplate>
+                        <p class="msg info">
+                            Belum ada Realisasi.
+                        </p>                
+                    </prop:EmptyTemplate>
+                </com:TActiveRepeater>	
+            </com:TTabView>
+            <com:TTabView Caption="Permasalahan">
+                <p style="text-align:right">
+                    <com:TActiveCheckBox ID="chkpermasalahan" OnCheckedChanged="panelViewChanged" Checked="<%=$_SESSION['currentPageRealisasi']['viewindex']==1?true:false%>">
+                        <prop:ClientSide.OnLoading>
+                            $('<%=$this->chkpermasalahan->ClientId%>').disabled='disabled';									
+                        </prop:ClientSide.OnLoading>
+                        <prop:ClientSide.onComplete>
+                            $('<%=$this->chkpermasalahan->ClientId%>').disabled='';																								                                                            
+                        </prop:ClientSide.OnComplete>
+                    </com:TActiveCheckBox>
+                </p>
+                <com:TActiveRepeater ID="RepeaterPermasalahan" DataKeyField="idproblem">
+                    <prop:HeaderTemplate>	
+                    <table class="list">		
+                        <thead>
+                            <tr>
+                                <th width="25" class="center">No</th>
+                                <th width="120" class="center">Tanggal</th>
+                                <th class="center">Permasalahan</th>                                
+                                <th width="160" class="center">Actions</th>
+                            </tr>                            
+                        </thead>
+                        <tbody>
+                    </prop:HeaderTemplate>
+                    <prop:ItemTemplate>
+                        <tr>
+                            <td class="left"><%#$this->Data['no']%></td>
+                            <td class="left"><%#$this->Page->TGL->tanggal('d F Y',$this->Data['tanggal'])%></td>	
+                            <td class="left"><%#$this->Data['judul']%></td>                            
+                            <td class="center">                       
+                                <com:TActiveLinkButton Text="Hapus" OnClick="Page.deletePermasalahan" ClientSide.PostState="false"/>
+                            </td>
+                        </tr>
+                    </prop:ItemTemplate>	
+                    <prop:AlternatingItemTemplate>
+                        <tr>
+                            <td class="left"><%#$this->Data['no']%></td>
+                            <td class="left"><%#$this->Page->TGL->tanggal('d F Y',$this->Data['tanggal'])%></td>	
+                            <td class="left"><%#$this->Data['judul']%></td>                            
+                            <td class="center">                       
+                                <com:TActiveLinkButton Text="Hapus" OnClick="Page.deletePermasalahan" ClientSide.PostState="false"/>
+                            </td>
+                        </tr>
+                    </prop:AlternatingItemTemplate>	            
+                    <prop:FooterTemplate>
+                        <tbody>
+                        </table>
+                    </prop:FooterTemplate>	
+                     <prop:EmptyTemplate>
+                        <p class="msg info">
+                            Belum ada permasalahan.
+                        </p>                
+                    </prop:EmptyTemplate>
+                </com:TActiveRepeater>	
+            </com:TTabView>
+            <com:TTabView Caption="Photo">
+                <p style="text-align:right">
+                    <com:TActiveCheckBox ID="chkphoto" OnCheckedChanged="panelViewChanged" Checked="<%=$_SESSION['currentPageRealisasi']['viewindex']==2?true:false%>" Text="">                        
+                        <prop:ClientSide.OnLoading>
+                            $('<%=$this->chkphoto->ClientId%>').disabled='disabled';									
+                        </prop:ClientSide.OnLoading>
+                        <prop:ClientSide.onComplete>
+                            $('<%=$this->chkphoto->ClientId%>').disabled='';																								                                                            
+                        </prop:ClientSide.OnComplete>
+                    </com:TActiveCheckBox>
+                </p>                                             
+                <com:TActiveRepeater ID="RepeaterPhoto" DataKeyField="idphoto">
+                    <prop:HeaderTemplate>	
+                    <table class="list">		
+                        <thead>
+                            <tr>
+                                <th width="25" class="center">No</th>
+                                <th width="120" class="center">Photo</th>
+                                <th width="120" class="center">Bulan</th>
+                                <th class="center">Keterangan</th>                                
+                                <th width="160" class="center">Actions</th>
+                            </tr>                            
+                        </thead>
+                        <tbody>
+                    </prop:HeaderTemplate>
+                    <prop:ItemTemplate>
+                        <tr>
+                            <td class="left"><%#$this->DataItem['no']%></td>
+                            <td class="left"><img src="<%#$this->page->setup->getAddress().'/'.$this->DataItem['nama_photo']%>" width="100" height="100" /></td>	
+                            <td class="left"><%#$this->Page->TGL->getMonth(4,$this->DataItem['bulan'])%></td> 
+                            <td class="left"><%#$this->DataItem['keterangan']%></td>                            
+                            <td class="center">                       
+                                <com:TActiveLinkButton Text="Hapus" OnClick="Page.deletePhoto" CommandParameter="<%#$this->DataItem['nama_photo']%>" ClientSide.PostState="false"/>
+                            </td>
+                        </tr>
+                    </prop:ItemTemplate>	
+                    <prop:AlternatingItemTemplate>
+                        <tr>
+                            <td class="left"><%#$this->DataItem['no']%></td>
+                            <td class="left"><img src="<%#$this->page->setup->getAddress().'/'.$this->DataItem['nama_photo']%>" width="100" height="100" /></td>	
+                            <td class="left"><%#$this->Page->TGL->getMonth(4,$this->DataItem['bulan'])%></td> 
+                            <td class="left"><%#$this->DataItem['keterangan']%></td>                            
+                            <td class="center">                       
+                                <com:TActiveLinkButton Text="Hapus" OnClick="Page.deletePhoto" CommandParameter="<%#$this->DataItem['nama_photo']%>" ClientSide.PostState="false"/>
+                            </td>
+                        </tr>
+                    </prop:AlternatingItemTemplate>	            
+                    <prop:FooterTemplate>
+                        <tbody>
+                        </table>
+                    </prop:FooterTemplate>	
+                     <prop:EmptyTemplate>
+                        <p class="msg info">
+                            Belum ada photo realisasi.
+                        </p>                
+                    </prop:EmptyTemplate>
+                </com:TActiveRepeater>	
+            </com:TTabView>
+        </com:TTabPanel>		
+	</com:TPanel>
+</com:TContent>
+
+

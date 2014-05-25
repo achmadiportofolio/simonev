@@ -1,0 +1,147 @@
+<%@ Title="Data Belanja - Uraian" %>
+<com:TContent ID="leftcontent">
+    <%include Application.pages.m.belanja.LeftMenu%>
+</com:TContent>
+<com:TContent ID="header">Uraian Kegiatan</com:TContent>
+<com:TContent ID="content">    	 		
+    <com:TPanel Visible="<%= $this->getDefaultProcess()==true && $this->invalidIDProyekMessage==false %>">
+        <p class="msg warning">
+            ID Proyek tidak dikenali.
+        </p>
+    </com:TPanel>
+	<com:TPanel Visible="<%= $this->getDefaultProcess()==true && $this->invalidIDProyekMessage==true  %>">		        
+        <a href="<%=$this->Service->constructUrl('m.belanja.Kegiatan')%>">Kembali ke Kegiatan</a>        
+        <h3 class="tit">Data Kegiatan</h3>		
+        <table class="list">
+            <tr>				
+                <td width="150" class="left">Kode Kegiatan</td>
+                <td class="left"><%=$this->session['currentPageUraian']['dataKegiatan']['kode_proyek']%></td>
+            </tr>
+            <tr>				
+                <td class="left">Nama Kegiatan</td>
+                <td><%=$this->session['currentPageUraian']['dataKegiatan']['nama_proyek']%></td>
+            </tr>
+            <tr>				
+                <td class="left">Nilai Pagu</td>
+                <td><%=$this->finance->toRupiah($this->session['currentPageUraian']['dataKegiatan']['nilai_pagu'])%></td>
+            </tr>
+            <tr>				
+                <td class="left">Sisa</td>
+                <td><%=$this->finance->toRupiah($this->session['currentPageUraian']['dataKegiatan']['sisa_nilai_pagu'])%></td>
+            </tr>
+        </table>        			        
+		<com:TActiveRepeater ID="RepeaterS" DatakeyField="iduraian">
+			<prop:HeaderTemplate>	
+			<table class="list">					
+                <thead>
+                <tr>
+                    <th width="25" class="left">No</th>
+                    <th width="120">Rekening</th>
+                    <th width="400">Nama Uraian</th>
+                    <th width="40">Vol</th>
+                    <th width="60">SAT.</th>
+                    <th width="100">Jenis <br />Pelaksanaan</th>
+                    <th width="120">Jumlah <Pagu <br />Uraian</th>		                                        		                    		
+                    <th width="140">Total <br />Realisasi</th>
+                    <th width="120">SISA</th>
+                    <th width="50">Total <br />Fisik</th>
+                    <th>Ket</th>                    
+                </tr>
+                </thead>
+                <tbody>
+			</prop:HeaderTemplate>		
+			<prop:ItemTemplate>
+                <tr>
+                    <td class="center"><%#$this->Data['no']%></td>
+                    <td class="center"><%#$this->Data['rekening']%></td>	
+                    <td class="left">
+                        <%#$this->Data['nama_uraian']%> <br />
+                        | <a href="<%#$this->Service->constructUrl('m.belanja.Realisasi',array('id'=>$this->DataItem['iduraian']))%>">Realisasi</a> |
+                    </td>
+                    <td class="center"><%#$this->Data['volume']%></td>
+                    <td class="center"><%#$this->Data['satuan']%></td>
+                    <td class="center"><%#$this->Data['jp']=='none'?'-':$this->Page->kegiatan->getJenisPelaksanaan($this->Data['jp'])%></td>
+                    <td class="right"><%#$this->Page->finance->toRupiah($this->Data['nilai'])%></td>
+                    <td class="right"><%#$this->Page->finance->toRupiah($this->Data['totalrealisasi'])%></td>
+                    <td class="right"><%#$this->Page->finance->toRupiah($this->Data['sisapagu'])%></td>
+                    <td class="center"><%#$this->Data['totalfisik']%></td>                    
+                    <td class="center"><img src="<%=$this->Page->theme->baseUrl%>/design/<%#$this->Data['terrealisasi']=='1'?'ico-done.gif':'ico-delete.gif'%>"/></td>                   
+                </tr>
+			</prop:ItemTemplate>	
+			<prop:AlternatingItemTemplate>
+				<tr>
+                    <td class="center"><%#$this->Data['no']%></td>
+                    <td class="center"><%#$this->Data['rekening']%></td>	
+                    <td class="left">
+                        <%#$this->Data['nama_uraian']%> <br />
+                        | <a href="<%#$this->Service->constructUrl('m.belanja.Realisasi',array('id'=>$this->DataItem['iduraian']))%>">Realisasi</a> |
+                    </td>
+                    <td class="center"><%#$this->Data['volume']%></td>
+                    <td class="center"><%#$this->Data['satuan']%></td>
+                    <td class="center"><%#$this->Data['jp']=='none'?'-':$this->Page->kegiatan->getJenisPelaksanaan($this->Data['jp'])%></td>
+                    <td class="right"><%#$this->Page->finance->toRupiah($this->Data['nilai'])%></td>
+                    <td class="right"><%#$this->Page->finance->toRupiah($this->Data['totalrealisasi'])%></td>
+                    <td class="right"><%#$this->Page->finance->toRupiah($this->Data['sisapagu'])%></td>
+                    <td class="center"><%#$this->Data['totalfisik']%></td>                    
+                    <td class="center"><img src="<%=$this->Page->theme->baseUrl%>/design/<%#$this->Data['terrealisasi']=='1'?'ico-done.gif':'ico-delete.gif'%>"/></td>                    
+                </tr>
+			</prop:AlternatingItemTemplate>	
+            <prop:FooterTemplate>
+                <tbody>
+                </table>
+                Catatan : <img src="<%=$this->Page->theme->baseUrl%>/design/ico-delete.gif"/> belum direalisasikan
+            </prop:FooterTemplate>	
+             <prop:EmptyTemplate>
+                <p class="msg info">
+                    Belum ada Uraian.
+                </p>                
+            </prop:EmptyTemplate>
+		</com:TActiveRepeater>	       
+	</com:TPanel>
+     <com:NModalPanel ID="modalCopyUraian">
+        <div id="panel" class="box round first grid fullpage" style="width:700px;position: fixed;top: 30px;left: 400px;z-index: 2000;">                
+            <table class="list">      
+                <thead>
+                    <tr>
+                        <td colspan="2" class="left">Salin Uraian</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="2" class="left">Sistem sebelum menyalin uraian dari kegiatan lain, terlebih dahulu akan menghapus uraian kegiatan ini.</td>
+                    </tr>
+                    <tr>
+                        <td class="left" width="150">
+                            Dari Kode Kegiatan
+                        </td>
+                        <td class="left">                            
+                            <com:TActiveTextBox ID="txtCopyKodeKegiatan" MaxLength="18" Columns="18" />
+                            <com:TRequiredFieldValidator ControlToValidate="txtCopyKodeKegiatan" Display="Dynamic" ValidationGroup="copyuraian" ErrorMessage="Isi Kode Kegiatan yang akan dikopi" FocusOnError="true" />
+                            <com:TActiveCustomValidator ControlToValidate="txtCopyKodeKegiatan" Display="Dynamic" OnServerValidate="checkKodeKegiatan" ValidationGroup="copyuraian" FocusOnError="true" />
+                        </td>                                    
+                    </tr>
+                    <tr>
+                        <td class="left">
+                            &nbsp;
+                        </td>
+                        <td class="left">
+                            <com:TActiveButton ID="btnCopy" Text="Copy" OnClick="Page.copyUraian" CssClass="input-submit" ValidationGroup="copyuraian">                    
+                                <prop:ClientSide.OnPreDispatch>
+                                    $('loadingbar').show();                                     
+                                </prop:ClientSide.OnPreDispatch>
+                                <prop:ClientSide.OnLoading>
+                                    $('<%=$this->btnCopy->ClientId%>').disabled='disabled';						
+                                </prop:ClientSide.OnLoading>
+                                <prop:ClientSide.OnComplete>																	
+                                    $('<%=$this->btnCopy->ClientId%>').disabled='';						                                   						
+                                    $('loadingbar').hide(); 
+                                </prop:ClientSide.OnComplete>
+                            </com:TActiveButton>
+                            <a href="#" Class="btn btn-black btn-cross" OnClick="new Modal.Box('<%=$this->modalCopyUraian->ClientID%>').hide()"><span></span>Close</a>                            
+                        </td>                                    
+                    </tr>
+                </tbody>
+            </table>
+        </div>            
+    </com:NModalPanel>
+</com:TContent>
